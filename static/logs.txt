@@ -1,5 +1,40 @@
 
-[2026.05.13 at 07:16:17]: 127.0.0.1 (User: Annonymous) successfully accessed / (Home)
-[2026.05.13 at 07:18:36]: 127.0.0.1 (User: Annonymous) successfully accessed / (Home)
-[2026.05.13 at 07:22:33]: 127.0.0.1 (User: Annonymous) successfully accessed / (Home)
-[2026.05.13 at 07:27:25]: 127.0.0.1 (User: Annonymous) successfully accessed / (Home)
+[2026.05.13 at 15:53:23]: 127.0.0.1 (User: Annonymous) successfully accessed /users/signup/ (Signup)
+[2026.05.13 at 15:53:25]: 127.0.0.1 (User: Annonymous) successfully accessed /users/login/ (Login)
+[2026.05.13 at 15:53:37]: 127.0.0.1 (User: Annonymous) successfully accessed /users/signup/ (Signup)
+[2026.05.13 at 15:53:39]: 127.0.0.1 FAILED to log in as johnsmith55
+[2026.05.13 at 15:53:39]: 127.0.0.1 (User: johnsmith55) encountered the following error: User does not exist
+No exception information available.
+[2026.05.13 at 15:53:40]: 127.0.0.1 (User: Annonymous) successfully accessed /users/login/ (Login)
+[2026.05.13 at 15:53:54]: 127.0.0.1 FAILED to log in as johnsmith55
+[2026.05.13 at 15:53:54]: 127.0.0.1 (User: johnsmith55) encountered the following error: User does not exist
+No exception information available.
+[2026.05.13 at 15:53:56]: 127.0.0.1 FAILED to log in as johnsmith55
+[2026.05.13 at 15:53:56]: 127.0.0.1 (User: johnsmith55) encountered the following error: User does not exist
+No exception information available.
+[2026.05.13 at 15:54:03]: 127.0.0.1 (User: Annonymous) successfully accessed /users/signup/ (Signup)
+[2026.05.13 at 15:54:26]: 127.0.0.1 (User: Annonymous) successfully accessed /users/signup/validate/ (Signup Validation)
+[2026.05.13 at 15:54:35]: 127.0.0.1 FAILED to created a new account with the username of johnsmith55
+[2026.05.13 at 15:54:35]: 127.0.0.1 (User: johnsmith55) encountered the following error: user_add_new failed to create a new user
+No exception information available.
+[2026.05.13 at 15:55:22]: 127.0.0.1 (User: Annonymous) successfully accessed /users/signup/validate/ (Signup Validation)
+[2026.05.13 at 15:55:27]: 127.0.0.1 (User: Annonymous) successfully accessed /users/signup/validate/ (Signup Validation)
+[2026.05.13 at 15:55:30]: 127.0.0.1 FAILED to created a new account with the username of johnsmith55
+[2026.05.13 at 15:55:30]: 127.0.0.1 (User: johnsmith55) encountered the following error: user_add_new failed to create a new user
+No exception information available.
+[2026.05.13 at 15:55:35]: 127.0.0.1 FAILED to created a new account with the username of johnsmith55
+[2026.05.13 at 15:55:35]: 127.0.0.1 (User: johnsmith55) encountered the following error: user_add_new failed to create a new user
+No exception information available.
+[2026.05.13 at 16:00:12]: 127.0.0.1 (User: Annonymous) successfully accessed / (Home)
+[2026.05.13 at 16:00:13]: 127.0.0.1 (User: Annonymous) successfully accessed /users/signup/ (Signup)
+[2026.05.13 at 16:00:37]: 127.0.0.1 (User: Annonymous) successfully accessed /users/signup/validate/ (Signup Validation)
+[2026.05.13 at 16:00:37]: 127.0.0.1 FAILED to created a new account with the username of johnsmith55
+[2026.05.13 at 16:00:37]: 127.0.0.1 (User: johnsmith55) encountered the following error: user_add_new failed to create a new user
+No exception information available.
+[2026.05.13 at 16:04:22]: 127.0.0.1 (User: Annonymous) successfully accessed /users/signup/validate/ (Signup Validation)
+[2026.05.13 at 16:04:22]: 127.0.0.1 successfully created a new account with the username of johnsmith55
+[2026.05.13 at 16:04:22]: 127.0.0.1 (User: Annonymous) successfully accessed /users/login/ (Login)
+[2026.05.13 at 16:05:56]: 127.0.0.1 successfully logged in as johnsmith55
+[2026.05.13 at 16:05:56]: 127.0.0.1 (User: johnsmith55) successfully accessed / (Home)
+[2026.05.13 at 16:05:59]: 127.0.0.1 (User: johnsmith55) successfully accessed /users/account/ (Account Page)
+[2026.05.13 at 16:06:02]: 127.0.0.1 (User: johnsmith55) successfully accessed / (Home)

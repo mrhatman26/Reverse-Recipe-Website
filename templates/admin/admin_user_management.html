@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="page_mainbody">
+        <div id="home_paragraph1">
+                <h3 id="page_header">Admin: User Management</h3>
+                <div id="page_mainbody_home">
+                    {% if userdata is not none and userdata|length > 0 %}
+                        <table>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Is Admin</th>
+                                <th>Change Admin</th>
+                                <th>Is Mod</th>
+                                <th>Change Mod</th>
+                                <th>Delete</th>
+                            </tr>
+                            {% for user in userdata %}
+                                <tr>
+                                    <td>{{ user.user_id }}</td>
+                                    <td>{{ user.user_name }}</td>
+                                    <td>{{ user.user_email }}</td>
+                                    {% if user.user_isAdmin == 1 %}
+                                        <td>Yes</td>
+                                        <td style="border: 0px;"><a href="{{ url_for('admin_swap_admin_status', user_id=user.user_id) }}" class="button_link"><p class="button" style="margin-bottom: 2%;">Revoke</p></a></td>
+                                    {% else %}
+                                        <td>No</td>
+                                        <td style="border: 0px;"><a href="{{ url_for('admin_swap_admin_status', user_id=user.user_id) }}" class="button_link"><p class="button" style="margin-bottom: 2%;">Apply</p></a></td>
+                                    {% endif %}       
+                                    {% if user.user_isMod == 1 %}
+                                        <td>Yes</td>
+                                        <td style="border: 0px;"><a href="{{ url_for('admin_swap_mod_status', user_id=user.user_id) }}" class="button_link"><p class="button" style="margin-bottom: 2%;">Revoke</p></a></td>
+                                    {% else %}
+                                        <td>No</td>
+                                        <td style="border: 0px;"><a href="{{ url_for('admin_swap_mod_status', user_id=user.user_id) }}" class="button_link"><p class="button" style="margin-bottom: 2%;">Apply</p></a></td>
+                                    {% endif %}                                   
+                                    <td style="border: 0px;"><a href="{{ url_for('admin_user_delete', user_id=user.user_id) }}" class="button_link"><p class="button" style="margin-bottom: 2%;">X</p></a></td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% else %}
+                        <table>
+                            <tr>
+                                <th>ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Is Admin</th>
+                                <th>Change Admin</th>
+                                <th>Is Mod</th>
+                                <th>Change Mod</th>
+                                <th>Delete</th>
+                            </tr>
+                            <tr>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                                <td>-</td>
+                            </tr>
+                        </table>
+                    {% endif %}
+                </div>
+        </div>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block content %}
+<div id="page_mainbody">
+        <div id="home_paragraph1">
+                <h3 id="page_header">Welcome!</h3>
+                <div id="home_image">
+                        <img src="{{ url_for('static', filename='generic.jpg') }}">                        
+                </div>
+                <div id="page_mainbody_home">
+                        <p>Welcome to Scrap Recipes!</p>
+                        <p>Have you ever found yourself looking at a bunch of ingredients and thinking: What can I make with these?</p>
+                        <p>Well, it's simple! Enter the ingredients you have and this website will give you the closest recipes you can make.</p>
+                        <p>Note: All recipes are from external websites and are submitted by users</p>
+                        <p>Note: The base recipes of this website were scraped from BBC Food.</p>
+                </div>
+        </div>
+</div>
+{% endblock %}

@@ -128,6 +128,7 @@ CREATE TABLE link_recipe_dietary(
 );
 
 /*The following entries are for linking tables to values that no longer exist*/
+INSERT INTO table_users(user_id, user_name, user_pass, user_isDeleted) VALUES(-2, "SYSTEM", "-2_NOPASS", 1);
 INSERT INTO table_users(user_id, user_name, user_pass, user_isDeleted) VALUES(-1, "DELETED", "-1_NOPASS", 1);
 INSERT INTO table_recipes(recipe_id, recipe_name, recipe_isDeleted) VALUES(-1, "DELETED", 1);
 INSERT INTO table_ingredients(ingredient_id, ingredient_name, ingredient_isDeleted) VALUES(-1, "DELETED", 1);

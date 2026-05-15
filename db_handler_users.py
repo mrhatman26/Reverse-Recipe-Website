@@ -1,7 +1,7 @@
 import mysql.connector, hashlib
 from db_config import *
 from misc import fprint, pause
-from global_vars import deployed
+from global_vars import mysql_info
 
 def string_hash(text):
     text = text.encode('utf-8')

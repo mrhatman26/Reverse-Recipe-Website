@@ -1,5 +1,5 @@
 import mysql.connector
-from global_vars import deployed, mysql_info
+from global_vars import mysql_info
 from db_config import *
 
 def admin_test_server():

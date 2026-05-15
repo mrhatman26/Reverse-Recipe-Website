@@ -1,8 +1,8 @@
 import datetime as dt
-from file_paths import version_file_dir
+from file_paths import VERSION_FILE_DIR
 
 def get_version():
-    version_file = open(version_file_dir, "w")
+    version_file = open(VERSION_FILE_DIR, "w")
     version = version_file.readline()
     version_file.close()
     if version is not None:
@@ -16,7 +16,7 @@ def get_version():
 def update_version():
     version = dt.datetime.now()
     version = "(" + str(version.strftime(("%Y%m%d.%H%M%S"))) + ")"
-    version_file = open(version_file_dir, "w")
+    version_file = open(VERSION_FILE_DIR, "w")
     version_file.write(version)
     version_file.close()
     return version

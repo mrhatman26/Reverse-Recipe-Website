@@ -1,6 +1,8 @@
-import mysql.connector
-from global_vars import mysql_info
+import mysql.connector, traceback
+from global_vars import mysql_info, SYSTEM_USER_ID
 from db_config import *
+from misc import get_time, pause
+
 
 """Recipes"""
 #Get
@@ -42,7 +44,7 @@ def recipe_get_id(recipe_name, database=None, cursor=None, close_connection=True
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
-        cursor.execute("SELECT recipe_id FROM table_recipes WHERE recipe_name = %s", (str(recipe_name)),)
+        cursor.execute("SELECT recipe_id FROM table_recipes WHERE recipe_name = %s", (str(recipe_name),))
         fetch = cursor.fetchall()[0][0]
         if close_connection is True:
             cursor.close()
@@ -54,6 +56,10 @@ def recipe_get_id(recipe_name, database=None, cursor=None, close_connection=True
                 cursor.close()
             if database is not None:
                 database.close()
+        print(traceback.format_exc())
+        print(recipe_name)
+        print(type(recipe_name))
+        pause()
         return None
 
 #Check
@@ -131,10 +137,12 @@ def recipe_add_new(recipe_data, auto_approve=False, database=None, cursor=None, 
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
-        cursor.execute("INSERT INTO table_recipes VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (recipe_data["id"], recipe_data["name"], recipe_data["author"], recipe_data["prep"], recipe_data["cook_time"], recipe_data["serve_size"], recipe_data["method"], recipe_data["type"], recipe_data["scraped"], recipe_data["source_url"], recipe_data["isDeleted"]),)
+        cursor.execute("INSERT INTO table_recipes(recipe_name, recipe_author, recipe_prep, recipe_cook_time, recipe_serve_size, recipe_method, recipe_type, recipe_scraped, recipe_source_url, recipe_isDeleted) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (recipe_data["recipe_name"], recipe_data["recipe_author"], recipe_data["recipe_prep"], recipe_data["recipe_cook_time"], recipe_data["recipe_serve_size"], recipe_data["recipe_method"], recipe_data["recipe_type"], recipe_data["recipe_scraped"], recipe_data["recipe_source_url"], recipe_data["recipe_isDeleted"]),)
         database.commit()
         if auto_approve is True:
-            cursor.execute("")
+            new_recipe_id = recipe_get_id(recipe_data["recipe_name"], database=database, cursor=cursor, close_connection=False)
+            cursor.execute("INSERT INTO link_recipe_user VALUES(%s, %s, %s, %s, %s, %s, %s)", (new_recipe_id, SYSTEM_USER_ID, get_time(no_brackets=True), 1, get_time(no_brackets=True), SYSTEM_USER_ID, None),)
+            database.commit()
         if close_connection is True:
             cursor.close()
             database.close()

@@ -192,10 +192,10 @@ def user_delete_confirmed():
     if current_user.is_authenticated:
         access_log(request.remote_addr, get_user(), "/users/modify/delete/confirmed/ (Delete Account Confirmed)")
         old_user = get_user()
-        logout_user()
-        login_log(request.remote_addr, old_user, logout=True, auto=True)
         if user_delete(current_user.id) is True:
+            logout_user()
             delete_user_log(request.remote_addr, old_user)
+            login_log(request.remote_addr, old_user, logout=True, auto=True)
             return redirect("/")
         else:
             delete_user_log(request.remote_addr, old_user, failed=True)
@@ -301,4 +301,4 @@ if __name__ == '__main__':
         from waitress import serve
         serve(app, host="0.0.0.0", port=5000)
     else:
-        app.run(host="0.0.0.0", debug=True)
+        app.run(host="0.0.0.0", port=5000, debug=True)

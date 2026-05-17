@@ -1,4 +1,4 @@
-import sys, mysql.connector, csv
+import sys, mysql.connector, csv, ast
 from global_vars import mysql_info
 from file_paths import SCRAPED_FILE_DIR
 from misc import set_database_config
@@ -24,8 +24,9 @@ def load_recipe_data():
 
 def add_recipes():
     print("Adding recipes to database...", end="", flush=True)
-    #Change this to show how many have been done.
+    recipe_count = str(len(recipe_data))
     recipe_info = {}
+    recipe_no = 0
     for recipe in recipe_data:
         recipe_info = {
             "recipe_name": recipe[1],
@@ -40,7 +41,16 @@ def add_recipes():
             "recipe_isDeleted": 0
         }
         recipe_add_new(recipe_info, auto_approve=True, database=database, cursor=cursor, close_connection=False)
-    print("Done.")
+        print("Adding recipes to database..." + str(recipe_no + 1) + "/" + recipe_count, end="\r", flush=True)
+        recipe_no += 1
+    print("Adding recipes to database...Done.")
+
+def add_ingredients():
+    print("Adding ingredients to database and linking to recipes...", end="", flush=True)
+    ingredient_info = {}
+    for recipe in recipe_data:
+        for ingredient in ast.literal_eval(recipe[7]):
+            eeee
 
 #Main
 access_log("localhost", "SYSTEM", "load_csv_data.py", admin=True)

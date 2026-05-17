@@ -2,7 +2,7 @@ import sys, mysql.connector, csv, ast
 from global_vars import mysql_info
 from file_paths import SCRAPED_FILE_DIR
 from misc import set_database_config
-from db_handler_general import recipe_add_new
+from db_handler_general import recipe_add_new, recipe_check_name_exists, ingredient_add_new
 from action_logger import access_log
 
 recipe_data = []
@@ -23,7 +23,7 @@ def load_recipe_data():
     print("Done.")
 
 def add_recipes():
-    print("Adding recipes to database...", end="", flush=True)
+    print("Adding recipes to database...", end="\r", flush=True)
     recipe_count = str(len(recipe_data))
     recipe_info = {}
     recipe_no = 0
@@ -40,17 +40,18 @@ def add_recipes():
             "recipe_source_url": recipe[11],
             "recipe_isDeleted": 0
         }
-        recipe_add_new(recipe_info, auto_approve=True, database=database, cursor=cursor, close_connection=False)
+        if recipe_check_name_exists(recipe_info["recipe_name"], database=database, cursor=cursor, close_connection=False) is False:
+            recipe_add_new(recipe_info, auto_approve=True, database=database, cursor=cursor, close_connection=False)
         print("Adding recipes to database..." + str(recipe_no + 1) + "/" + recipe_count, end="\r", flush=True)
         recipe_no += 1
-    print("Adding recipes to database...Done.")
+    print("Adding recipes to database...Done.", flush=True)
 
 def add_ingredients():
     print("Adding ingredients to database and linking to recipes...", end="", flush=True)
     ingredient_info = {}
-    for recipe in recipe_data:
-        for ingredient in ast.literal_eval(recipe[7]):
-            eeee
+    #for recipe in recipe_data:
+    #    for ingredient in ast.literal_eval(recipe[7]):
+    #        eeee
 
 #Main
 access_log("localhost", "SYSTEM", "load_csv_data.py", admin=True)

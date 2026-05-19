@@ -2,7 +2,8 @@ import sys, mysql.connector, csv, ast, os
 from global_vars import mysql_info
 from file_paths import SCRAPED_FILE_DIR
 from misc import set_database_config
-from db_handler_general import recipe_add_new, recipe_check_name_exists, ingredient_add_new, ingredient_check_name_exists
+from db_handler_general import recipe_add_new, recipe_check_name_exists, recipe_get_id, ingredient_add_new, ingredient_check_name_exists, ingredient_get_id
+from db_handler_links import link_add_recipe_ingredient, link_check_recipe_ingredient
 from action_logger import access_log
 
 recipe_data = []
@@ -62,6 +63,10 @@ def add_ingredients():
                     }
                     if ingredient_check_name_exists(ingredient_info["ingredient_name"]) is False:
                         ingredient_add_new(ingredient_info, auto_approve=True, database=database, cursor=cursor, close_connection=False)
+                    recipe_id = recipe_get_id(recipe[1], database=database, cursor=cursor, close_connection=False)
+                    ingredient_id = ingredient_get_id(ingredient_info["ingredient_name"], database=database, cursor=cursor, close_connection=False)
+                    if link_check_recipe_ingredient(recipe_id, database=database, cursor=cursor, close_connection=False) is False:
+                        link_add_recipe_ingredient(recipe_id, ingredient_id, auto_approve=True, database=database, cursor=cursor, close_connection=False)
             print("Adding ingredients to database from recipes..." + str(recipe_no + 1) + "/" + recipe_count, end="\r", flush=True)
         except:
             print(traceback.format_exc(), flush=True)
@@ -78,7 +83,7 @@ set_database_config(sys.argv)
 database = mysql.connector.connect(**mysql_info)
 cursor = database.cursor()
 load_recipe_data()
-#add_recipes()
+add_recipes()
 add_ingredients()
 cursor.close()
 database.close()

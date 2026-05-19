@@ -1,8 +1,8 @@
-import sys, mysql.connector, csv, ast
+import sys, mysql.connector, csv, ast, os
 from global_vars import mysql_info
 from file_paths import SCRAPED_FILE_DIR
 from misc import set_database_config
-from db_handler_general import recipe_add_new, recipe_check_name_exists, ingredient_add_new
+from db_handler_general import recipe_add_new, recipe_check_name_exists, ingredient_add_new, ingredient_check_name_exists
 from action_logger import access_log
 
 recipe_data = []
@@ -23,7 +23,6 @@ def load_recipe_data():
     print("Done.")
 
 def add_recipes():
-    print("Adding recipes to database...", end="\r", flush=True)
     recipe_count = str(len(recipe_data))
     recipe_info = {}
     recipe_no = 0
@@ -47,18 +46,39 @@ def add_recipes():
     print("Adding recipes to database...Done.", flush=True)
 
 def add_ingredients():
-    print("Adding ingredients to database and linking to recipes...", end="", flush=True)
     ingredient_info = {}
-    #for recipe in recipe_data:
-    #    for ingredient in ast.literal_eval(recipe[7]):
-    #        eeee
+    recipe_count = str(len(recipe_data))
+    recipe_no = 0
+    import traceback
+    from misc import pause
+    for recipe in recipe_data:
+        recipe[7] = str(recipe[7])
+        try:
+            if recipe[7].isspace() is False and recipe[7] != "":
+                for ingredient in ast.literal_eval(recipe[7]):
+                    ingredient_info = {
+                        "ingredient_name": ingredient,
+                        "ingredient_desc": None
+                    }
+                    if ingredient_check_name_exists(ingredient_info["ingredient_name"]) is False:
+                        ingredient_add_new(ingredient_info, auto_approve=True, database=database, cursor=cursor, close_connection=False)
+            print("Adding ingredients to database from recipes..." + str(recipe_no + 1) + "/" + recipe_count, end="\r", flush=True)
+        except:
+            print(traceback.format_exc(), flush=True)
+            print("'" + str(recipe[7]) + "'", flush=True)
+            pause()
+        recipe_no += 1
+    print("Adding ingredients to database from recipes...Done")
+
 
 #Main
+os.system("cls")
 access_log("localhost", "SYSTEM", "load_csv_data.py", admin=True)
 set_database_config(sys.argv)
 database = mysql.connector.connect(**mysql_info)
 cursor = database.cursor()
 load_recipe_data()
-add_recipes()
+#add_recipes()
+add_ingredients()
 cursor.close()
 database.close()

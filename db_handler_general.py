@@ -2,7 +2,7 @@ import mysql.connector, traceback
 from global_vars import mysql_info, SYSTEM_USER_ID
 from db_config import *
 from misc import pause
-from db_handler_links import link_add_recipe_user, link_check_recipe_user
+from db_handler_links import link_add_recipe_user, link_check_recipe_user, link_add_ingredient_user, link_check_ingredient_user
 
 
 """Recipes"""
@@ -196,7 +196,7 @@ def ingredient_get_id(ingredient_name, database=None, cursor=None, close_connect
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
-        cursor.execute("SELECT ingredient_id FROM table_recipes WHERE ingredient_name = %s", (str(ingredient_name),))
+        cursor.execute("SELECT ingredient_id FROM table_ingredients WHERE ingredient_name = %s", (str(ingredient_name),))
         fetch = cursor.fetchall()[0][0]
         if close_connection is True:
             cursor.close()
@@ -252,7 +252,7 @@ def ingredient_check_name_exists(ingredient_name, database=None, cursor=None, cl
         if database is None or cursor is None:
             database =mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
-        cursor.execute("SELECT ingredient_id FROM table_recipes WHERE ingredient_name = %s", (str(ingredient_name)),)
+        cursor.execute("SELECT ingredient_id FROM table_ingredients WHERE ingredient_name = %s", (str(ingredient_name),))
         fetch = cursor.fetchall()
         if close_connection is True:
             cursor.close()
@@ -284,12 +284,12 @@ def ingredient_add_new(ingredient_data, auto_approve=False, database=None, curso
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
         if ingredient_check_name_exists(ingredient_data["ingredient_name"], database=database, cursor=cursor, close_connection=False) is False:
-            cursor.execute("INSERT INTO table_recipes(ingredient_name, ingredient_desc, ingredient_isDeleted) VALUES (%s, %s, %s)", (ingredient_data["ingredient_name"], ingredient_data["ingredient_desc"], 0),)
+            cursor.execute("INSERT INTO table_ingredients(ingredient_name, ingredient_desc, ingredient_isDeleted) VALUES (%s, %s, %s)", (ingredient_data["ingredient_name"], ingredient_data["ingredient_desc"], 0),)
             database.commit()
             if auto_approve is True:
                 new_ingredient_id = ingredient_get_id(ingredient_data["ingredient_name"], database=database, cursor=cursor, close_connection=False)
-                cursor.execute("INSERT INTO link_ingredient_user VALUES(%s, %s, %s, %s, %s, %s, %s)", (new_ingredient_id, SYSTEM_USER_ID, get_time(no_brackets=True), 1, get_time(no_brackets=True), SYSTEM_USER_ID, None),)
-                database.commit()
+                if link_check_ingredient_user(new_ingredient_id, database=database, cursor=cursor, close_connection=False) is False:
+                    link_add_ingredient_user(new_ingredient_id, SYSTEM_USER_ID, auto_approve=True, database=database, cursor=cursor, close_connection=False)
             if close_connection is True:
                 cursor.close()
                 database.close()

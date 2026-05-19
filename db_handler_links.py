@@ -3,6 +3,7 @@ from global_vars import mysql_info, SYSTEM_USER_ID
 from db_config import *
 from misc import get_time
 
+'''Recipes'''
 #Check
 def link_check_recipe_user(recipe_id, database=None, cursor=None, close_connection=True):
     #Checks if the specified recipe is linked to a user or not.
@@ -31,9 +32,6 @@ def link_check_recipe_user(recipe_id, database=None, cursor=None, close_connecti
                 cursor.close()
             if database is not None:
                 database.close()
-        import traceback
-        print(traceback.format_exc())
-        input("(Press ENTER to continue)")
         return False
         
 
@@ -67,7 +65,67 @@ def link_add_recipe_user(recipe_id, user_id, auto_approve=False, database=None, 
                 cursor.close()
             if database is not None:
                 database.close()
-        import traceback
-        print(traceback.format_exc())
-        input("(Press ENTER to continue)")
+        return False
+    
+'''Ingredients'''
+#Check
+def link_check_ingredient_user(ingredient_id, database=None, cursor=None, close_connection=True):
+    #Checks if the specified ingredient is linked to a user or not.
+    #Arguments:
+    #   -ingredient_id: The ingredient to check.
+    #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
+    #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
+    #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
+    #Returns: Boolean (True: The recipe is linked to a user, False: The recipe is not linked to a user; an error occurred)
+    try:
+        if database is None or cursor is None:
+            database = mysql.connector.connect(**mysql_info)
+            cursor = database.cursor()
+        cursor.execute("SELECT ingredient_id FROM link_ingredient_user WHERE ingredient_id = %s", (str(ingredient_id),))
+        fetch = cursor.fetchall()
+        if close_connection is True:
+            cursor.close()
+            database.close()
+        if len(fetch) > 0:
+            return True
+        else:
+            return False
+    except:
+        if close_connection is True:
+            if cursor is not None:
+                cursor.close()
+            if database is not None:
+                database.close()
+        return False
+    
+#Add
+def link_add_ingredient_user(ingredient_id, user_id, auto_approve=False, database=None, cursor=None, close_connection=True):
+    #Links a recipe to a user. The linked user is then considered to be the user that originally added it. A link must be approved by a moderator or an admin. Auto approve does this automatically.
+    #Arguments:
+    #   -ingredient_id: The ingredient to link the user to.
+    #   -user_id: The user to link to the ingredient.
+    #   -auto_approve (Bool) [Default: False]: If True, any recipes will be automatically approved and assigned the approver of SYSTEM. 
+    #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
+    #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
+    #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
+    #Returns: Boolean (True: Recipe was linked to user succesfully, False: Recipe failed to be linked; an error occurred)
+    try:
+        if database is None or cursor is None:
+            database = mysql.connector.connect(**mysql_info)
+            cursor = database.cursor()
+        cursor.execute("INSERT INTO link_ingredient_user(ingredient_id, user_id, link_date) VALUES(%s, %s, %s)", (ingredient_id, user_id, get_time(database_time=True)),)
+        database.commit()
+        if auto_approve is True:
+            cursor.execute("UPDATE link_ingredient_user SET link_isApproved = 1, approve_date = %s, approve_user_id = %s WHERE ingredient_id = %s AND user_id = %s", (get_time(database_time=True), SYSTEM_USER_ID, ingredient_id, user_id))
+            database.commit()
+        if close_connection is True:
+            cursor.close()
+            database.close()
+        return True
+    except:
+        if close_connection is True:
+            if cursor is not None:
+                cursor.close()
+            if database is not None:
+                database.close()
         return False

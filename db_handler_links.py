@@ -34,10 +34,11 @@ def link_check_recipe_user(recipe_id, database=None, cursor=None, close_connecti
                 database.close()
         return False
     
-def link_check_recipe_ingredient(recipe_id, database=None, cursor=None, close_connection=True):
-    #Checks if the specified recipe is linked to an ingredient or not.
+def link_check_recipe_ingredient(recipe_id, ingredient_id, database=None, cursor=None, close_connection=True):
+    #Checks if the specified recipe is linked to the specified ingredient or not.
     #Arguments:
     #   -recipe_id: The recipe to check.
+    # -ingredient_id: The ingredient to check.
     #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
     #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
@@ -46,7 +47,7 @@ def link_check_recipe_ingredient(recipe_id, database=None, cursor=None, close_co
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
-        cursor.execute("SELECT recipe_id FROM link_recipe_ingredient WHERE recipe_id = %s", (str(recipe_id),))
+        cursor.execute("SELECT recipe_id FROM link_recipe_ingredient WHERE recipe_id = %s AND ingredient_id = %s", (str(recipe_id), str(ingredient_id),))
         fetch = cursor.fetchall()
         if close_connection is True:
             cursor.close()
@@ -99,10 +100,11 @@ def link_add_recipe_user(recipe_id, user_id, auto_approve=False, database=None, 
         return False
     
 def link_add_recipe_ingredient(recipe_id, ingredient_id, auto_approve=False, database=None, cursor=None, close_connection=True):
-    #Links a recipe to an ingredient. A link must be approved by a moderator or an admin. Auto approve does this automatically.
+    #Links a recipe to an ingredient and links the link to a user. A link must be approved by a moderator or an admin. Auto approve does this automatically.
     #Arguments:
     #   -recipe_id: The recipe to link the ingredient to.
     #   -ingredient_id: The ingredient to link the recipe to.
+    #   -user_id: The user to link this link to.
     #   -auto_approve (Bool) [Default: False]: If True, any recipes will be automatically approved and assigned the approver of SYSTEM. 
     #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
     #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
@@ -112,7 +114,7 @@ def link_add_recipe_ingredient(recipe_id, ingredient_id, auto_approve=False, dat
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
-        cursor.execute("INSERT INTO link_recipe_ingredient(recipe_id, ingredient_id, link_date) VALUES(%s, %s, %s)", (recipe_id, ingredient_id, get_time(database_time=True)),)
+        cursor.execute("INSERT INTO link_recipe_ingredient(recipe_id, ingredient_id, user_id, link_date) VALUES(%s, %s, %s, %s)", (recipe_id, ingredient_id, SYSTEM_USER_ID, get_time(database_time=True)),)
         #Line 115 is causing an error?
         database.commit()
         if auto_approve is True:

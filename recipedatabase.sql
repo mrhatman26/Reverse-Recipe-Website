@@ -57,6 +57,7 @@ CREATE TABLE table_dietary_info(
 /*Link Recipe to User*/
 DROP TABLE IF EXISTS link_recipe_user;
 CREATE TABLE link_recipe_user(
+    link_id INT NOT NULL AUTO_INCREMENT,
     recipe_id INT NOT NULL,
     user_id INT NOT NULL,
     link_date DATE NOT NULL,
@@ -64,7 +65,7 @@ CREATE TABLE link_recipe_user(
     approve_date DATETIME,
     approve_user_id INT,
     approve_reason TEXT,
-    PRIMARY KEY(recipe_id),
+    PRIMARY KEY(link_id),
     FOREIGN KEY(recipe_id) REFERENCES table_recipes(recipe_id),
     FOREIGN KEY(user_id) REFERENCES table_users(user_id),
     FOREIGN KEY(approve_user_id) REFERENCES table_users(user_id)
@@ -73,6 +74,7 @@ CREATE TABLE link_recipe_user(
 /*Link Ingredient to User*/
 DROP TABLE IF EXISTS link_ingredient_user;
 CREATE TABLE link_ingredient_user(
+    link_id INT NOT NULL AUTO_INCREMENT,
     ingredient_id INT NOT NULL,
     user_id INT NOT NULL,
     link_date DATE NOT NULL,
@@ -80,7 +82,7 @@ CREATE TABLE link_ingredient_user(
     approve_date DATETIME,
     approve_user_id INT,
     approve_reason TEXT,
-    PRIMARY KEY(ingredient_id),
+    PRIMARY KEY(link_id),
     FOREIGN KEY(ingredient_id) REFERENCES table_ingredients(ingredient_id),
     FOREIGN KEY(user_id) REFERENCES table_users(user_id),
     FOREIGN KEY(approve_user_id) REFERENCES table_users(user_id)
@@ -89,6 +91,7 @@ CREATE TABLE link_ingredient_user(
 /*Link Dietary Info to User*/
 DROP TABLE IF EXISTS link_dietary_user;
 CREATE TABLE link_dietary_user(
+    link_id INT NOT NULL AUTO_INCREMENT,
     dietary_id INT NOT NULL,
     user_id INT NOT NULL,
     link_date DATE NOT NULL,
@@ -96,7 +99,7 @@ CREATE TABLE link_dietary_user(
     approve_date DATETIME,
     approve_user_id INT,
     approve_reason TEXT,
-    PRIMARY KEY(dietary_id),
+    PRIMARY KEY(link_id),
     FOREIGN KEY(dietary_id) REFERENCES table_dietary_info(dietary_id),
     FOREIGN KEY(user_id) REFERENCES table_users(user_id),
     FOREIGN KEY(approve_user_id) REFERENCES table_users(user_id)
@@ -105,6 +108,7 @@ CREATE TABLE link_dietary_user(
 /*Link Recipe to Ingredient*/
 DROP TABLE IF EXISTS link_recipe_ingredient;
 CREATE TABLE link_recipe_ingredient(
+    link_id INT NOT NULL AUTO_INCREMENT,
     recipe_id INT NOT NULL,
     ingredient_id INT NOT NULL,
     user_id INT NOT NULL,
@@ -113,7 +117,7 @@ CREATE TABLE link_recipe_ingredient(
     approve_date DATETIME,
     approve_user_id INT,
     approve_reason TEXT,
-    PRIMARY KEY(recipe_id),
+    PRIMARY KEY(link_id),
     FOREIGN KEY(ingredient_id) REFERENCES table_ingredients(ingredient_id),
     FOREIGN KEY(user_id) REFERENCES table_users(user_id),
     FOREIGN KEY(approve_user_id) REFERENCES table_users(user_id)
@@ -122,6 +126,7 @@ CREATE TABLE link_recipe_ingredient(
 /*Link Recipe to Dietary Info*/
 DROP TABLE IF EXISTS link_recipe_dietary;
 CREATE TABLE link_recipe_dietary(
+    link_id INT NOT NULL AUTO_INCREMENT,
     recipe_id INT NOT NULL,
     dietary_id INT NOT NULL,
     user_id INT NOT NULL,
@@ -130,7 +135,7 @@ CREATE TABLE link_recipe_dietary(
     approve_date DATETIME,
     approve_user_id INT,
     approve_reason TEXT,
-    PRIMARY KEY(recipe_id),
+    PRIMARY KEY(link_id),
     FOREIGN KEY(recipe_id) REFERENCES table_recipes(recipe_id),
     FOREIGN KEY(dietary_id) REFERENCES table_dietary_info(dietary_id),
     FOREIGN KEY(user_id) REFERENCES table_users(user_id),

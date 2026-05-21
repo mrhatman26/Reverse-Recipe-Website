@@ -65,7 +65,7 @@ def add_ingredients():
                         ingredient_add_new(ingredient_info, auto_approve=True, database=database, cursor=cursor, close_connection=False)
                     recipe_id = recipe_get_id(recipe[1], database=database, cursor=cursor, close_connection=False)
                     ingredient_id = ingredient_get_id(ingredient_info["ingredient_name"], database=database, cursor=cursor, close_connection=False)
-                    if link_check_recipe_ingredient(recipe_id, database=database, cursor=cursor, close_connection=False) is False:
+                    if link_check_recipe_ingredient(recipe_id, ingredient_id, database=database, cursor=cursor, close_connection=False) is False:
                         link_add_recipe_ingredient(recipe_id, ingredient_id, auto_approve=True, database=database, cursor=cursor, close_connection=False)
             print("Adding ingredients to database from recipes..." + str(recipe_no + 1) + "/" + recipe_count, end="\r", flush=True)
         except:

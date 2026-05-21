@@ -165,7 +165,7 @@ def ingredient_get_name(ingredient_id, database=None, cursor=None, close_connect
     #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
     #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
-    #Returns: String (Recipe Name) or None (recipe not found or has no name)
+    #Returns: String (Ingredient Name) or None (Ingredient not found or has no name)
     try:
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
@@ -185,13 +185,13 @@ def ingredient_get_name(ingredient_id, database=None, cursor=None, close_connect
         return None
     
 def ingredient_get_id(ingredient_name, database=None, cursor=None, close_connection=True):
-    #Returns the recipe's ID using its name.
+    #Returns the ingredients's ID using its name.
     #Arguments:
-    #   -recipe_name (str): The recipe name to return the ID of.
+    #   -ingredient_name (str): The ingredient name to return the ID of.
     #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
     #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
-    #Returns: String (Recipe ID) or None (Recipe not found)
+    #Returns: String (Ingredient ID) or None (Ingredient not found)
     try:
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
@@ -313,10 +313,154 @@ def ingredient_add_new(ingredient_data, auto_approve=False, database=None, curso
 
 """Dietary Info"""
 #Get
+def dietary_get_name(dietary_id, database=None, cursor=None, close_connection=True):
+    #Returns the dietary info's name using its ID (I should have given dietary info a better name...).
+    #Arguments:
+    #   -dietary_id (int or str): The dietary ID to return the name of.
+    #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
+    #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
+    #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
+    #Returns: String (Dietary Info Name) or None (recipe not found or has no name)
+    try:
+        if database is None or cursor is None:
+            database = mysql.connector.connect(**mysql_info)
+            cursor = database.cursor()
+        cursor.execute("SELECT dietary_name FROM table_dietary_info WHERE dietary_id = %s", (str(dietary_id)),)
+        fetch = cursor.fetchall()[0][0]
+        if close_connection is True:
+            cursor.close()
+            database.close()
+        return fetch
+    except:
+        if close_connection is True:
+            if cursor is not None:
+                cursor.close()
+            if database is not None:
+                database.close()
+        return None
+    
+def dietary_get_id(dietary_name, database=None, cursor=None, close_connection=True):
+    #Returns the dietary info's ID using its name (DIETARY INFO NEEDS A BETTER NAME BUT I DON'T WANT TO REFACTOR! And yet somehow, I have a degree...?).
+    #Arguments:
+    #   -dietary_name (str): The dietary info name to return the ID of.
+    #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
+    #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
+    #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
+    #Returns: String (Dietary Info ID) or None (Dietary Info ID not found)
+    try:
+        if database is None or cursor is None:
+            database = mysql.connector.connect(**mysql_info)
+            cursor = database.cursor()
+        cursor.execute("SELECT dietary_id FROM table_dietary_info WHERE dietary_name = %s", (str(dietary_name),))
+        fetch = cursor.fetchall()[0][0]
+        if close_connection is True:
+            cursor.close()
+            database.close()
+        return fetch
+    except:
+        if close_connection is True:
+            if cursor is not None:
+                cursor.close()
+            if database is not None:
+                database.close()
+        return None
 
 #Check
+def dietary_check_id_exists(dietary_id, database=None, cursor=None, close_connection=True):
+    #Checks if the dietary info, specified by the given ID, exists.
+    #Arguments:
+    #   -dietary_id (int or str): The dietary info ID to check.
+    #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
+    #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
+    #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
+    #Returns: Boolean (True: ID exists, False: ID does not exist or an error occurred)
+    try:
+        if database is None or cursor is None:
+            database =mysql.connector.connect(**mysql_info)
+            cursor = database.cursor()
+        cursor.execute("SELECT dietary_id FROM table_dietary_info WHERE dietary_id = %s", (str(dietary_id)),)
+        fetch = cursor.fetchall()
+        if close_connection is True:
+            cursor.close()
+            database.close()
+        if len(fetch) > 0:
+            return True
+        else:
+            return False
+    except:
+        if close_connection is True:
+            if cursor is not None:
+                cursor.close()
+            if database is not None:
+                database.close()
+        return False
+    
+def dietary_check_name_exists(dietary_name, database=None, cursor=None, close_connection=True):
+    #Checks if the dietary info, specified by the given name, exists.
+    #Arguments:
+    #   -dietary_name (int or str): The dietary info name to check.
+    #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
+    #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
+    #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
+    #Returns: Boolean (True: Name exists, False: Name does not exist or an erro occurred)
+    try:
+        if database is None or cursor is None:
+            database =mysql.connector.connect(**mysql_info)
+            cursor = database.cursor()
+        cursor.execute("SELECT dietary_id FROM table_dietary_info WHERE dietary_name = %s", (str(dietary_name),))
+        fetch = cursor.fetchall()
+        if close_connection is True:
+            cursor.close()
+            database.close()
+        if len(fetch) > 0:
+            return True
+        else:
+            return False
+    except:
+        if close_connection is True:
+            if cursor is not None:
+                cursor.close()
+            if database is not None:
+                database.close()
+        return False
 
 #Add
+def dietary_add_new(dietary_data, auto_approve=False, database=None, cursor=None, close_connection=True):
+    #Adds new dietary info to the database using the given data, but only if it doesn't already exist.
+    #Arguments:
+    #   -ingredient_data (Dict): The ingredient to add. Must be a dictionary containing the ingredient data. The keys must be the same as the column names in the ingredients table.
+    #   -auto_approve (Bool) [Default: False]: If True, any recipes will be automatically approved and assigned the approver of SYSTEM. 
+    #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
+    #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
+    #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
+    #Returns: Boolean (True: Recipe was added succesfully; recipe already exists, False: Recipe failed to be added; an error occurred)
+    try:
+        if database is None or cursor is None:
+            database = mysql.connector.connect(**mysql_info)
+            cursor = database.cursor()
+        if dietary_check_name_exists(dietary_data["dietary_name"], database=database, cursor=cursor, close_connection=False) is False:
+            cursor.execute("INSERT INTO table_dietary_info(dietary_name, dietary_desc, dietary_isDeleted) VALUES (%s, %s, %s)", (dietary_data["dietary_name"], dietary_data["dietary_desc"], 0),)
+            database.commit()
+            if auto_approve is True:
+                new_ingredient_id = dietary_get_id(dietary_data["dietary_name"], database=database, cursor=cursor, close_connection=False)
+                if link_check_ingredient_user(new_ingredient_id, database=database, cursor=cursor, close_connection=False) is False:
+                    link_add_ingredient_user(new_ingredient_id, SYSTEM_USER_ID, auto_approve=True, database=database, cursor=cursor, close_connection=False)
+            if close_connection is True:
+                cursor.close()
+                database.close()
+            return True
+        else:
+            if close_connection is True:
+                cursor.close()
+                database.close()
+            return True
+    except:
+        if close_connection is True:
+            if cursor is not None:
+                cursor.close()
+            if database is not None:
+                database.close()
+        return False
 
 #Update
 

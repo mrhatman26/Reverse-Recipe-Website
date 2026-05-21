@@ -256,7 +256,7 @@ def link_add_ingredient_user(ingredient_id, user_id, auto_approve=False, databas
     
 '''Dietary Info'''
 #Check
-def link_check_dietary_info(dietary_id, database=None, cursor=None, close_connection=True):
+def link_check_dietary_user(dietary_id, database=None, cursor=None, close_connection=True):
     #Checks if the specified dietary info is linked to a user or not.
     #Arguments:
     #   -dietary_id: The dietary info to check.

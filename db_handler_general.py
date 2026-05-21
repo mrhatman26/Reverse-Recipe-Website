@@ -2,7 +2,7 @@ import mysql.connector, traceback
 from global_vars import mysql_info, SYSTEM_USER_ID
 from db_config import *
 from misc import pause
-from db_handler_links import link_add_recipe_user, link_check_recipe_user, link_add_ingredient_user, link_check_ingredient_user
+from db_handler_links import link_add_recipe_user, link_check_recipe_user, link_add_ingredient_user, link_check_ingredient_user, link_add_dietary_user, link_check_dietary_user
 
 
 """Recipes"""
@@ -278,7 +278,7 @@ def ingredient_add_new(ingredient_data, auto_approve=False, database=None, curso
     #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
     #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
-    #Returns: Boolean (True: Recipe was added succesfully; recipe already exists, False: Recipe failed to be added; an error occurred)
+    #Returns: Boolean (True: Ingredient was added succesfully; Ingredient already exists, False: Recipe failed to be added; an error occurred)
     try:
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
@@ -428,12 +428,12 @@ def dietary_check_name_exists(dietary_name, database=None, cursor=None, close_co
 def dietary_add_new(dietary_data, auto_approve=False, database=None, cursor=None, close_connection=True):
     #Adds new dietary info to the database using the given data, but only if it doesn't already exist.
     #Arguments:
-    #   -ingredient_data (Dict): The ingredient to add. Must be a dictionary containing the ingredient data. The keys must be the same as the column names in the ingredients table.
+    #   -dietary_data (Dict): The dietary info to add. Must be a dictionary containing the dietary info data. The keys must be the same as the column names in the dietary info table.
     #   -auto_approve (Bool) [Default: False]: If True, any recipes will be automatically approved and assigned the approver of SYSTEM. 
     #   -database (None or database object) [Defaul: None]: The database connection to use. If None, a new connection is created.
     #   -cursor (None or database cursor object) [Default: None]: The cursor to use to interact with the database. If None or if the database is None, a new one is created.
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
-    #Returns: Boolean (True: Recipe was added succesfully; recipe already exists, False: Recipe failed to be added; an error occurred)
+    #Returns: Boolean (True: Dietary info was added succesfully; Dietary info already exists, False: Dietary info failed to be added; an error occurred)
     try:
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
@@ -442,9 +442,9 @@ def dietary_add_new(dietary_data, auto_approve=False, database=None, cursor=None
             cursor.execute("INSERT INTO table_dietary_info(dietary_name, dietary_desc, dietary_isDeleted) VALUES (%s, %s, %s)", (dietary_data["dietary_name"], dietary_data["dietary_desc"], 0),)
             database.commit()
             if auto_approve is True:
-                new_ingredient_id = dietary_get_id(dietary_data["dietary_name"], database=database, cursor=cursor, close_connection=False)
-                if link_check_ingredient_user(new_ingredient_id, database=database, cursor=cursor, close_connection=False) is False:
-                    link_add_ingredient_user(new_ingredient_id, SYSTEM_USER_ID, auto_approve=True, database=database, cursor=cursor, close_connection=False)
+                new_dietary_id = dietary_get_id(dietary_data["dietary_name"], database=database, cursor=cursor, close_connection=False)
+                if link_check_dietary_user(new_dietary_id, database=database, cursor=cursor, close_connection=False) is False:
+                    link_add_dietary_user(new_dietary_id, SYSTEM_USER_ID, auto_approve=True, database=database, cursor=cursor, close_connection=False)
             if close_connection is True:
                 cursor.close()
                 database.close()

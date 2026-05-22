@@ -1,8 +1,9 @@
 import mysql.connector, traceback
-from global_vars import mysql_info, SYSTEM_USER_ID
+from global_vars import mysql_info, SYSTEM_USER_ID, DEFAULT_RECIPE_NO
 from db_config import *
 from misc import pause
 from db_handler_links import link_add_recipe_user, link_check_recipe_user, link_add_ingredient_user, link_check_ingredient_user, link_add_dietary_user, link_check_dietary_user
+from action_logger import error_log
 
 
 """Recipes"""
@@ -58,6 +59,47 @@ def recipe_get_id(recipe_name, database=None, cursor=None, close_connection=True
             if database is not None:
                 database.close()
         return None
+    
+def recipe_get_all_partial(starting_id, no_results=DEFAULT_RECIPE_NO, search="", search_type=0):
+    #Gets a partial selection of recipes from the database.
+    #Arguments:
+    #   -starting_id (Int): The ID of the first recipe to return. The rest of the returned recipes will be the ones after the specified recipe ID (Why is this so hard to explain?).
+    #   -no_results (Int) [Default: DEFAULT_RECIPE_NO]: The number of recipes to return including the recipe specified by starting_id. 
+    #   -search (Str) [Default: None]: The search parameters to perform when selecting recipes. Each value must be seperated by a plus (+).
+    #   -search_type (Int) [Default: 0]: The type of search being done. 0 is searching for recipes with specified ingredients, 1 is searching for recipes with specified dietary info, 2 is searching for recipes by name and 3 is searching by recipe type.
+    #Returns: Tuple:
+    #   0: List of recipes returned from database.
+    #   1: Number of pages to contain all recipes for pagination.
+    #   2: Total number of recipes in the database (Ignoring the DELETED recipe with ID of -1).
+    recipes = []
+    database = mysql.connector.connect(**mysql_info)
+    cursor = database.cursor()
+    fetch = []
+    try:
+        if search.isspace() is True or search == "":
+            cursor.execute("SELECT table_recipes.recipe_id, table_recipes.recipe_name, table_recipes.recipe_author, table_recipes.recipe_type FROM table_recipes INNER JOIN link_recipe_user ON table_recipes.recipe_id=link_recipe_user.recipe_id WHERE link_recipe_user.link_isApproved = 1 AND table_recipes.recipe_isDeleted = 0 ORDER BY table_recipes.recipe_id DESC LIMIT %s, %s", (starting_id, no_results + 1))
+            fetch = cursor.fetchall()
+        else:
+            pass
+        for recipe in fetch:
+            recipes.append({
+                "recipe_id": recipe[0],
+                "recipe_name": recipe[1],
+                "recipe_author": recipe[2],
+                "recipe_type": recipe[3]
+            })
+        statement = cursor.statement
+        #ToDo: Calculate number of pages and total number of recipes for pagination!
+    except Exception as e:
+        error_log("localhost", "SYSTEM", "An error occurred while retrieving recipe data", traceback.format_exc())
+    finally:
+        statement = cursor.statement
+        #ToDo: Calculate number of pages and total number of recipes for pagination!
+        no_pages = 1
+        total_recipes = 10
+        cursor.close()
+        database.close()
+        return (recipes, no_pages, total_recipes)
 
 #Check
 def recipe_check_id_exists(recipe_id, database=None, cursor=None, close_connection=True):

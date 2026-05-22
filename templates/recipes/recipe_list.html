@@ -1,0 +1,35 @@
+<div id="drop_down_container">
+        <div id="drop_down_content" class="drop_down_content"></div>
+</div>
+{% extends "layout.html" %}
+{% block content %}
+<div id="page_mainbody">
+        <div id="home_paragraph1">
+                <h3 id="page_header">All recipes</h3>
+                <p id="previos_search" style="display: none;">{{ tag_search }}</p>
+                <div id="page_mainbody_home">
+                        <div id="recipe_search_div">
+                                <p>Search: <input multiple class="textbox" type="text" id="recipe_search" name="txt_recipe_search" placeholder="3d fps action"><input type="submit" value="Submit" class="submit_button" id="recipe_search_button"></p>
+                                <script src="http://code.jquery.com/jquery.min.js"></script>
+                                <script src=" {{ url_for('static', filename='scripts/tag_get_closest.js') }}"></script>
+                        </div>
+                        {% if current_user.is_authenticated %}
+                                <a href="{{ url_for('recipes_default') }}" class="button">Add New recipe</a>
+                        {% endif %}
+                        {% if recipe_list|length > 0 %}
+                                {% for recipe in recipe_list %}
+                                        <a>
+                                                <div class="recipe_box">
+                                                        <p>{{ recipe.recipe_name }}</p>
+                                                        <p>{{ recipe.recipe_author }}</p>
+                                                        <p>{{ recipe.recipe_type }}</p>
+                                                </div>
+                                        </a>
+                                {% endfor %}
+                        {% else %}
+                                <p>No recipes match your search</p>
+                        {% endif %}
+                </div>
+        </div>
+</div>
+{% endblock %}

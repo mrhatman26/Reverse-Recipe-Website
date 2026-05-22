@@ -14,7 +14,7 @@
         <nav>
             <ul>
                 <a href="{{ url_for('home') }}" class="nav_link"><li>About</li></a>
-                <a href="{{ url_for('home') }}" class="nav_link"><li>Recipes</li></a>
+                <a href="{{ url_for('recipes_default') }}" class="nav_link"><li>Recipes</li></a>
                 <a href="{{ url_for('home') }}" class="nav_link"><li>Ingredients</li></a>
                 <a href="{{ url_for('home') }}" class="nav_link"><li>Dietary</li></a>
                 {% if current_user.is_authenticated %}

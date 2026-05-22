@@ -2,12 +2,13 @@ import ast, traceback, sys
 from flask import Flask, render_template, url_for, request, redirect, abort
 from flask_login import LoginManager, current_user, login_user, logout_user
 from db_handler_users import *
+from db_handler_general import *
 from db_handler_admin import *
 from action_logger import *
 from version_handler import *
 from user import User
 from global_vars import deployed, live
-from misc import get_current_page, test_datetime, set_database_config
+from misc import set_database_config
 
 '''Server Vars'''
 version = update_version()
@@ -45,8 +46,14 @@ def home():
 
 '''Recipe Routes'''
 @app.route('/recipes/')
-def recipes_default():
+@app.route('/recipes/pid=<starting_id>')
+@app.route('/recipes/pid=<starting_id>&search=<search>')
+@app.route('/recipes/pid=<starting_id>&search=<search>&search_type=<search_type>')
+def recipes_default(starting_id=0, search="", no_results=10, search_type=0):
     access_log(request.remote_addr, get_user(), request.path)
+    starting_id = int(starting_id)
+    recipes = recipe_get_all_partial(starting_id, search=search, search_type=search_type)
+    return render_template("recipes/recipe_list.html", page_name="All Recipes", c_version=version, recipe_list=recipes[0])
 
 '''User Routes'''
 #Account PAge

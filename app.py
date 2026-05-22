@@ -40,34 +40,39 @@ def get_user():
 #Home/Index
 @app.route("/")
 def home():
-    access_log(request.remote_addr, get_user(), "/ (Home)")
+    access_log(request.remote_addr, get_user(), request.path)
     return render_template('home.html', page_name="Home", c_version=version)
+
+'''Recipe Routes'''
+@app.route('/recipes/')
+def recipes_default():
+    access_log(request.remote_addr, get_user(), request.path)
 
 '''User Routes'''
 #Account PAge
 @app.route("/users/account/")
 def user_account():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/account/ (Account Page)")
+        access_log(request.remote_addr, get_user(), request.path)
         user_data = user_single_get_all(current_user.id)
         return render_template("users/user_page.html", page_name=get_user(), user_data=user_data, c_version=version)
     else:
-        access_log(request.remote_addr, get_user(), "/users/account/ (Account Page)", failed=True, no_auth=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True, no_auth=True)
         return redirect("/users/login/")
 
 #Login
 @app.route("/users/login/")
 def user_login():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/login/ (Login)", failed=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True)
         return redirect("/")
     else:
-        access_log(request.remote_addr, get_user(), "/users/login/ (Login)")
+        access_log(request.remote_addr, get_user(), request.path)
         return render_template("users/login.html", page_name="Login", c_version=version)
 @app.route("/users/login/validate/", methods=["POST"])
 def user_login_validate():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/login/validate/ (Login Validation)", failed=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True)
         return redirect("/")
     else:
         userdata = request.get_data()
@@ -97,18 +102,18 @@ def user_login_validate():
 @app.route("/users/signup/")
 def user_signup():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/signup/ (Signup)", failed=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True)
         return redirect("/")
     else:
-        access_log(request.remote_addr, get_user(), "/users/signup/ (Signup)")
+        access_log(request.remote_addr, get_user(), request.path)
         return render_template("users/signup.html", page_name="Signup", c_version=version)
 @app.route("/users/signup/validate/", methods=["POST"])
 def user_signup_validate():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/signup/validate/ (Signup Validation)", failed=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True)
         return redirect("/")
     else:
-        access_log(request.remote_addr, get_user(), "/users/signup/validate/ (Signup Validation)")
+        access_log(request.remote_addr, get_user(), request.path)
         userdata = request.get_data()
         userdata = userdata.decode()
         userdata = ast.literal_eval(userdata)
@@ -134,7 +139,7 @@ def user_signup_validate():
 @app.route("/users/modify/username/", methods=["POST"])
 def user_change_username():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/modify/username/ (Modify Username)")
+        access_log(request.remote_addr, get_user(), request.path)
         new_username = request.get_data()
         new_username = new_username.decode()
         new_username = ast.literal_eval(new_username)
@@ -160,7 +165,7 @@ def user_change_username():
 @app.route("/users/modify/email/", methods=["POST"])
 def user_change_email():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/modify/email/ (Modify Email)")
+        access_log(request.remote_addr, get_user(), request.path)
         new_email = request.get_data()
         new_email = new_email.decode()
         new_email = ast.literal_eval(new_email)
@@ -182,15 +187,15 @@ def user_change_email():
 @app.route("/users/modify/delete/")
 def user_delete_validate():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/modify/delete/ (Delete Account Validate)")
+        access_log(request.remote_addr, get_user(), request.path)
         return render_template("confirmation.html", page_name="Are you sure?", message="Are you sure you want to delete your account?", dir_to_use="user_delete_confirmed", dir_to_return="user_account", yes_message="Yes, DELETE my account", no_message="No, return to my account page", c_version=version)
     else:
-        access_log(request.remote_addr, get_user(), "/users/modify/delete/ (Delete Account Validate)", failed=True, no_auth=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True, no_auth=True)
         abort(404)
 @app.route("/users/modify/delete/confirmed/")
 def user_delete_confirmed():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/modify/delete/confirmed/ (Delete Account Confirmed)")
+        access_log(request.remote_addr, get_user(), request.path)
         old_user = get_user()
         if user_delete(current_user.id) is True:
             logout_user()
@@ -201,19 +206,19 @@ def user_delete_confirmed():
             delete_user_log(request.remote_addr, old_user, failed=True)
             abort(500)
     else:
-        access_log(request.remote_addr, get_user(), "/users/modify/delete/confirmed/ (Delete Account Confirmed)", failed=True, no_auth=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True, no_auth=True)
         abort(404)
         
 #Logout
 @app.route("/users/logout/")
 def user_logout():
     if current_user.is_authenticated:
-        access_log(request.remote_addr, get_user(), "/users/logout/ (Logout)")
+        access_log(request.remote_addr, get_user(), request.path)
         login_log(request.remote_addr, get_user(), logout=True)
         logout_user()
         return redirect("/")
     else:
-        access_log(request.remote_addr, get_user(), "/users/logout/ (Logout)", failed=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True)
         return redirect("/")
     
 '''Mod Routes'''
@@ -222,13 +227,13 @@ def user_logout():
 def mod_main():
     if current_user.is_authenticated:
         if current_user.is_mod:
-            access_log(request.remote_addr, get_user(), "/mod/ (Mod: Main)")
+            access_log(request.remote_addr, get_user(), request.path)
             return render_template("mod/mod_main.html", page_name="Mod: Main", c_version=version)
         else:
-            access_log(request.remote_addr, get_user(), "/mod/ (Mod: Main)", failed=True)
+            access_log(request.remote_addr, get_user(), request.path, failed=True)
             abort(404)
     else:
-        access_log(request.remote_addr, get_user(), "/mod/ (Mod: Main)", failed=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True)
         abort(404)
     
 '''Admin Routes'''
@@ -237,13 +242,13 @@ def mod_main():
 def admin_main():
     if current_user.is_authenticated:
         if current_user.is_admin:
-            access_log(request.remote_addr, get_user(), "/admin/ (Admin: Main)", admin=True)
+            access_log(request.remote_addr, get_user(), request.path, admin=True)
             return render_template("admin/admin_main.html", page_name="Admin: Main", c_version=version)
         else:
-            access_log(request.remote_addr, get_user(), "/admin/ (Admin: Main)", failed=True, admin=True, no_auth=True)
+            access_log(request.remote_addr, get_user(), request.path, failed=True, admin=True, no_auth=True)
             abort(404)
     else:
-        access_log(request.remote_addr, get_user(), "/admin/ (Admin: Main)", failed=True, admin=True, no_auth=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True, admin=True, no_auth=True)
         abort(404)
 
 #User Management
@@ -251,13 +256,13 @@ def admin_main():
 def admin_user_management():
     if current_user.is_authenticated:
         if current_user.is_admin:
-            access_log(request.remote_addr, get_user(), "/admin/management/users/ (Admin: User Management)", admin=True)
+            access_log(request.remote_addr, get_user(), request.path, admin=True)
             return render_template("admin/admin_user_management.html", page_name="Admin: User Management", c_version=version, userdata=user_get_all())
         else:
-            access_log(request.remote_addr, get_user(), "/admin/management/users/ (Admin: User Management)", failed=True, admin=True, no_auth=True)
+            access_log(request.remote_addr, get_user(), request.path, failed=True, admin=True, no_auth=True)
             abort(404)
     else:
-        access_log(request.remote_addr, get_user(), "/admin/management/users/ (Admin: User Management)", failed=True, admin=True, no_auth=True)
+        access_log(request.remote_addr, get_user(), request.path, failed=True, admin=True, no_auth=True)
         abort(404)
 
 #Database Management
@@ -265,13 +270,13 @@ def admin_user_management():
 def admin_database_manage():
     if current_user.is_authenticated:
         if current_user.is_admin:
-            access_log(request.remote_addr, get_user(), "/admin/management/databasae/ (Admin: Database Management)", admin=True)
+            access_log(request.remote_addr, get_user(), request.path, admin=True)
             return render_template("admin/admin_database_management.html", page_name="Admin: Database Management", c_version=version)
         else:
-            access_log(request.remote_addr, get_user(), "/admin/management/databasae/ (Admin: Database Management)", admin=True, failed=True, no_auth=True)
+            access_log(request.remote_addr, get_user(), request.path, admin=True, failed=True, no_auth=True)
             abort(404)
     else:
-        access_log(request.remote_addr, get_user(), "/admin/management/databasae/ (Admin: Database Management)", admin=True, failed=True, no_auth=True)
+        access_log(request.remote_addr, get_user(), request.path, admin=True, failed=True, no_auth=True)
         abort(404)
 
 #Error Pages

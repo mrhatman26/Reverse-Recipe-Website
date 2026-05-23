@@ -21,7 +21,7 @@ def recipe_get_name(recipe_id, database=None, cursor=None, close_connection=True
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
         cursor.execute("SELECT recipe_name FROM table_recipes WHERE recipe_id = %s", (str(recipe_id)),)
-        fetch = cursor.fetchall()[0][0]
+        fetch = cursor.fetchall()[0][0].replace("_", " ").title()
         if close_connection is True:
             cursor.close()
             database.close()
@@ -43,6 +43,7 @@ def recipe_get_id(recipe_name, database=None, cursor=None, close_connection=True
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
     #Returns: String (Recipe ID) or None (Recipe not found)
     try:
+        recipe_name = recipe_name.replace(" ", "_")
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
@@ -84,9 +85,9 @@ def recipe_get_all_partial(starting_id, no_results=DEFAULT_RECIPE_NO, search="",
         for recipe in fetch:
             recipes.append({
                 "recipe_id": recipe[0],
-                "recipe_name": recipe[1],
-                "recipe_author": recipe[2],
-                "recipe_type": recipe[3]
+                "recipe_name": recipe[1].replace("_", " ").title(),
+                "recipe_author": recipe[2].replace("_", " ").title(),
+                "recipe_type": recipe[3].replace("_", " ").title()
             })
         statement = cursor.statement
     except Exception as e:
@@ -115,13 +116,13 @@ def recipe_get_individual_info(recipe_id):
         if len(fetch) > 0:
             recipe_info = {
                 "recipe_id": fetch[0][0],
-                "recipe_name": fetch[0][1],
-                "recipe_author": fetch[0][2],
+                "recipe_name": fetch[0][1].replace("_", " ").title(),
+                "recipe_author": fetch[0][2].replace("_", " ").title(),
                 "recipe_prep": fetch[0][3],
                 "recipe_cook_time": fetch[0][4],
                 "recipe_serve_size": fetch[0][5],
                 "recipe_method": fetch[0][6],
-                "recipe_type": fetch[0][7],
+                "recipe_type": fetch[0][7].replace("_", " ").title(),
                 "recipe_scraped": fetch[0][8],
                 "recipe_source_url": fetch[0][9],
                 "recipe_isDeleted": fetch[0][10],
@@ -172,6 +173,7 @@ def recipe_check_name_exists(recipe_name, database=None, cursor=None, close_conn
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
     #Returns: Boolean (True: Name exists, False: Name does not exist or an erro occurred)
     try:
+        recipe_name = recipe_name.replace(" ", "_").lower()
         if database is None or cursor is None:
             database =mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
@@ -205,6 +207,9 @@ def recipe_add_new(recipe_data, auto_approve=False, database=None, cursor=None, 
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
     #Returns: Boolean (True: Recipe was added succesfully, False: Recipe failed to be added; an error occurred)
     try:
+        recipe_data["recipe_name"] = recipe_data["recipe_name"].replace(" ", "_").lower()
+        recipe_data["recipe_author"] = recipe_data["recipe_author"].replace(" ", "_").lower()
+        recipe_data["recipe_type"] = recipe_data["recipe_type"].replace(" ", "_").lower()
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
@@ -245,7 +250,7 @@ def ingredient_get_name(ingredient_id, database=None, cursor=None, close_connect
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
         cursor.execute("SELECT ingredient_name FROM table_ingredients WHERE ingredient_id = %s", (str(ingredient_id)),)
-        fetch = cursor.fetchall()[0][0]
+        fetch = cursor.fetchall()[0][0].replace("_", " ").title()
         if close_connection is True:
             cursor.close()
             database.close()
@@ -267,6 +272,7 @@ def ingredient_get_id(ingredient_name, database=None, cursor=None, close_connect
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
     #Returns: String (Ingredient ID) or None (Ingredient not found)
     try:
+        ingredient_name = ingredient_name.replace(" ", "_").lower()
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
@@ -323,6 +329,7 @@ def ingredient_check_name_exists(ingredient_name, database=None, cursor=None, cl
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
     #Returns: Boolean (True: Name exists, False: Name does not exist or an erro occurred)
     try:
+        ingredient_name = ingredient_name.replace(" ", "_").lower()
         if database is None or cursor is None:
             database =mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
@@ -354,6 +361,7 @@ def ingredient_add_new(ingredient_data, auto_approve=False, database=None, curso
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
     #Returns: Boolean (True: Ingredient was added succesfully; Ingredient already exists, False: Recipe failed to be added; an error occurred)
     try:
+        ingredient_data["ingredient_name"] = ingredient_data["ingredient_name"].replace(" ", "_").lower()
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
@@ -400,7 +408,7 @@ def dietary_get_name(dietary_id, database=None, cursor=None, close_connection=Tr
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
         cursor.execute("SELECT dietary_name FROM table_dietary_info WHERE dietary_id = %s", (str(dietary_id)),)
-        fetch = cursor.fetchall()[0][0]
+        fetch = cursor.fetchall()[0][0].replace("_", " ").title()
         if close_connection is True:
             cursor.close()
             database.close()
@@ -422,6 +430,7 @@ def dietary_get_id(dietary_name, database=None, cursor=None, close_connection=Tr
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
     #Returns: String (Dietary Info ID) or None (Dietary Info ID not found)
     try:
+        dietary_name = dietary_name.replace(" ", "_").lower()
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
@@ -478,6 +487,7 @@ def dietary_check_name_exists(dietary_name, database=None, cursor=None, close_co
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
     #Returns: Boolean (True: Name exists, False: Name does not exist or an erro occurred)
     try:
+        dietary_name = dietary_name.replace(" ", "_").lower()
         if database is None or cursor is None:
             database =mysql.connector.connect(**mysql_info)
             cursor = database.cursor()
@@ -509,6 +519,7 @@ def dietary_add_new(dietary_data, auto_approve=False, database=None, cursor=None
     #   -close_connection (Bool) [Default: True]: If True, the database connection (and the cursor) will be closed. If False, they will be left open.
     #Returns: Boolean (True: Dietary info was added succesfully; Dietary info already exists, False: Dietary info failed to be added; an error occurred)
     try:
+        dietary_data["dietary_name"] = dietary_data["dietary_name"].replace(" ", "_").lower()
         if database is None or cursor is None:
             database = mysql.connector.connect(**mysql_info)
             cursor = database.cursor()

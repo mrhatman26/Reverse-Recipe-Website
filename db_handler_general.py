@@ -89,17 +89,49 @@ def recipe_get_all_partial(starting_id, no_results=DEFAULT_RECIPE_NO, search="",
                 "recipe_type": recipe[3]
             })
         statement = cursor.statement
-        #ToDo: Calculate number of pages and total number of recipes for pagination!
     except Exception as e:
         error_log("localhost", "SYSTEM", "An error occurred while retrieving recipe data", traceback.format_exc())
     finally:
         statement = cursor.statement
-        #ToDo: Calculate number of pages and total number of recipes for pagination!
+        #ToDo: Have all spaces in recipe names, recipe types, ingredient names and dietary info names be replaced with spaces.
+        #ToDo2: Calculate number of pages and total number of recipes for pagination!
         no_pages = 1
         total_recipes = 10
         cursor.close()
         database.close()
         return (recipes, no_pages, total_recipes)
+    
+def recipe_get_individual_info(recipe_id):
+    #Returns data for the specified recipe
+    #Arguments:
+    #   -recipe_id: The ID of the recipe to get the data forl.
+    #Returns: Dict (Contains recipe info with they keys being the column names of table_recipe)
+    recipe_info = {}
+    database = mysql.connector.connect(**mysql_info)
+    cursor = database.cursor()
+    try:
+        cursor.execute("SELECT * FROM table_recipes WHERE recipe_id = %s", (recipe_id,))
+        fetch = cursor.fetchall()
+        if len(fetch) > 0:
+            recipe_info = {
+                "recipe_id": fetch[0][0],
+                "recipe_name": fetch[0][1],
+                "recipe_author": fetch[0][2],
+                "recipe_prep": fetch[0][3],
+                "recipe_cook_time": fetch[0][4],
+                "recipe_serve_size": fetch[0][5],
+                "recipe_method": fetch[0][6],
+                "recipe_type": fetch[0][7],
+                "recipe_scraped": fetch[0][8],
+                "recipe_source_url": fetch[0][9],
+                "recipe_isDeleted": fetch[0][10],
+            }
+    except Exception as e:
+        error_log("localhost", "SYSTEM", "An error occurred while retrieving individual recipe data", traceback.format_exc())
+    finally:
+        cursor.close()
+        database.close()
+        return recipe_info
 
 #Check
 def recipe_check_id_exists(recipe_id, database=None, cursor=None, close_connection=True):

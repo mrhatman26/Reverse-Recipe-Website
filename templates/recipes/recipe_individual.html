@@ -1,0 +1,34 @@
+{% extends "layout.html" %}
+{% block content %}
+<script src="http://code.jquery.com/jquery.min.js"></script>
+<div id="page_mainbody">
+        <div id="home_paragraph1">
+                {% if recipe_data is not none %}   
+                    <h3 id="page_header">{{ recipe_data.recipe_name }}</h3>
+                {% else %}
+                    <h3 id="page_header">Invalid Recipe</h3>
+                {% endif %}
+                <div id="page_mainbody_home">
+                        {% if recipe_data is not none %}
+                            <p>Recipe By: {{ recipe_data.recipe_author }}</p>
+                            <p>Prepare Time: {{ recipe_data.recipe_prep }}</p>
+                            <p>Cook Time: {{ recipe_data.recipe_cook_time }}</p>
+                            <p>Serving Size: {{ recipe_data.recipe_serve_size }}</p>
+                            <p>Type: {{ recipe_data.recipe_type }}</p>
+                            {% if recipe_data.recipe_scraped == 1 %}
+                                <p>This recipe was scraped from BBC Food</p>
+                                <p>Original URL: <a href="{{ recipe_data.recipe_source_url }}">{{ recipe_data.recipe_source_url }}</a></p>
+                            {% endif %}
+                            <p>Method:<br>
+                            {% for step in recipe_method %}
+                                <p>{{ loop.index }}. {{ step }}</p>
+                            {% endfor %}
+                            </p>
+                        {% else %}
+                            <p>The selected recipe is invalid. Fire the guys who broke this. Build better ones.</p>
+                            <p>If this error is consistent, please report it!</p>
+                        {% endif %}
+                </div>
+        </div>
+</div>
+{% endblock %}

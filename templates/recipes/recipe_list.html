@@ -18,7 +18,7 @@
                         {% endif %}
                         {% if recipe_list|length > 0 %}
                                 {% for recipe in recipe_list %}
-                                        <a>
+                                        <a href="{{ url_for('recipes_individual', recipe_id=recipe.recipe_id) }}">
                                                 <div class="recipe_box">
                                                         <p>{{ recipe.recipe_name }}</p>
                                                         <p>{{ recipe.recipe_author }}</p>

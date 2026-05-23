@@ -45,6 +45,7 @@ def home():
     return render_template('home.html', page_name="Home", c_version=version)
 
 '''Recipe Routes'''
+#All Recipes
 @app.route('/recipes/')
 @app.route('/recipes/pid=<starting_id>')
 @app.route('/recipes/pid=<starting_id>&search=<search>')
@@ -55,8 +56,20 @@ def recipes_default(starting_id=0, search="", no_results=10, search_type=0):
     recipes = recipe_get_all_partial(starting_id, search=search, search_type=search_type)
     return render_template("recipes/recipe_list.html", page_name="All Recipes", c_version=version, recipe_list=recipes[0])
 
+#Individual Recipes
+@app.route('/recipes/recipe_id=<recipe_id>')
+def recipes_individual(recipe_id=0):
+    access_log(request.remote_addr, get_user(), request.path)
+    recipe_info = recipe_get_individual_info(recipe_id)
+    recipe_name = "Uknown Recipe"
+    recipe_method = []
+    if len(recipe_info) > 0:
+        recipe_name = recipe_info["recipe_name"]
+        recipe_method = ast.literal_eval(recipe_info["recipe_method"])
+    return render_template("recipes/recipe_individual.html", page_name=recipe_name, c_version=version, recipe_data=recipe_info, recipe_method=recipe_method)
+
 '''User Routes'''
-#Account PAge
+#Account Page
 @app.route("/users/account/")
 def user_account():
     if current_user.is_authenticated:

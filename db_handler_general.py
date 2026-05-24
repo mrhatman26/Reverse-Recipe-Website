@@ -3,6 +3,7 @@ from global_vars import mysql_info, SYSTEM_USER_ID, DEFAULT_RECIPE_NO
 from db_config import *
 from misc import pause
 from db_handler_links import link_add_recipe_user, link_check_recipe_user, link_add_ingredient_user, link_check_ingredient_user, link_add_dietary_user, link_check_dietary_user
+from db_handler_misc import get_no_pages, get_no_results
 from action_logger import error_log
 
 
@@ -76,11 +77,13 @@ def recipe_get_all_partial(starting_id, no_results=DEFAULT_RECIPE_NO, search="",
     database = mysql.connector.connect(**mysql_info)
     cursor = database.cursor()
     fetch = []
+    is_search = False
     try:
         if search.isspace() is True or search == "":
             cursor.execute("SELECT table_recipes.recipe_id, table_recipes.recipe_name, table_recipes.recipe_author, table_recipes.recipe_type FROM table_recipes INNER JOIN link_recipe_user ON table_recipes.recipe_id=link_recipe_user.recipe_id WHERE link_recipe_user.link_isApproved = 1 AND table_recipes.recipe_isDeleted = 0 ORDER BY table_recipes.recipe_id DESC LIMIT %s, %s", (starting_id, no_results + 1))
             fetch = cursor.fetchall()
         else:
+            is_search = True
             pass
         for recipe in fetch:
             recipes.append({
@@ -94,10 +97,8 @@ def recipe_get_all_partial(starting_id, no_results=DEFAULT_RECIPE_NO, search="",
         error_log("localhost", "SYSTEM", "An error occurred while retrieving recipe data", traceback.format_exc())
     finally:
         statement = cursor.statement
-        #ToDo: Have all spaces in recipe names, recipe types, ingredient names and dietary info names be replaced with spaces.
-        #ToDo2: Calculate number of pages and total number of recipes for pagination!
-        no_pages = 1
-        total_recipes = 10
+        no_pages = get_no_pages(cursor, statement, starting_id)
+        total_recipes = get_no_results(cursor, statement, is_search)
         cursor.close()
         database.close()
         return (recipes, no_pages, total_recipes)

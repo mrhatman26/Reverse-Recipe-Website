@@ -113,3 +113,47 @@ def set_database_config(args):
             sys.exit()
         else:
             fprint("Successfully connected to database")
+
+def convert_time(time):
+    time = round(time)
+    hours = 0
+    minutes = 0
+    seconds = 0
+    while True:
+        if time >= 3600: #An hour
+            time -= 3600
+            hours += 1
+        elif time >= 60: #A minute
+            time -= 60
+            minutes += 1
+        elif time >= 1: #A second
+            time -= 1
+            seconds += 1
+        else:
+            break
+    return [hours, minutes, seconds]
+
+def get_current_page(starting_id, no_results):
+    import time
+    start_time = time.time()
+    current_page = 0
+    if starting_id < 1:
+        return 0
+    else:
+        while True:
+            if starting_id >= no_results:
+                current_page += 1
+                starting_id -= no_results
+            else:
+                if starting_id > 0:
+                    current_page += 1
+                break
+            print(str(starting_id), end="", flush=True)
+        actual_final_time = time.time() - start_time
+        final_time = convert_time(actual_final_time)
+        time_file = open("..\\get_current_page_time.txt", "w")
+        time_file.write("get_current_page_time function took " + str(time.time() - start_time) + " seconds")
+        time_file.write("\n(" + str(final_time[0]) + " hours, " + str(final_time[1]) + " minutes and " + str(final_time[2]) + " seconds)")
+        time_file.close()
+        print("")
+        return current_page

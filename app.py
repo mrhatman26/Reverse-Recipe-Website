@@ -8,7 +8,9 @@ from action_logger import *
 from version_handler import *
 from user import User
 from global_vars import deployed, live
-from misc import set_database_config
+from misc import set_database_config, get_current_page
+#ToDo: Finish pagination
+#ToDo: Investigate why a recipe page with an invalid ID still acts as though nothing is wrong.
 
 '''Server Vars'''
 version = update_version()
@@ -54,7 +56,8 @@ def recipes_default(starting_id=0, search="", no_results=10, search_type=0):
     access_log(request.remote_addr, get_user(), request.path)
     starting_id = int(starting_id)
     recipes = recipe_get_all_partial(starting_id, search=search, search_type=search_type)
-    return render_template("recipes/recipe_list.html", page_name="All Recipes", c_version=version, recipe_list=recipes[0])
+    current_page = get_current_page(starting_id, no_results)
+    return render_template("recipes/recipe_list.html", page_name="All Recipes", c_version=version, recipe_list=recipes[0], no_pages=recipes[1], total_recipes=recipes[2], no_results=no_results, current_page=current_page + 1, starting_id=starting_id, search=search)
 
 #Individual Recipes
 @app.route('/recipes/recipe_id=<recipe_id>')

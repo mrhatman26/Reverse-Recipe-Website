@@ -15,6 +15,16 @@
                         </div>
                         {% if current_user.is_authenticated %}
                                 <a href="{{ url_for('recipes_default') }}" class="button">Add New recipe</a>
+                                <p></p>
+                        {% endif %}
+                        <p>Current Page: {{ current_page }}</p>
+                        <p>Starting ID: {{ starting_id }}</p>
+                        <p>No. Results: {{ no_results }}</p>
+                        {% set test = starting_id % no_results %}
+                        {% if test > 0 %}
+                                <p>Whole: No</p>
+                        {% else %}
+                                <p>Whole: Yes</p>
                         {% endif %}
                         {% if recipe_list|length > 0 %}
                                 {% for recipe in recipe_list %}
@@ -26,6 +36,20 @@
                                                 </div>
                                         </a>
                                 {% endfor %}
+                                {% if total_recipes > 10 %}
+                                        {% set previous_starting_id =  starting_id - no_results %}
+                                        {% set next_starting_id = starting_id + no_results %}
+                                        {% if next_starting_id > total_recipes - 1 %}
+                                                {% set next_starting_id = total_recipes - 1 %}
+                                        {% endif %}
+                                        {% if previous_starting_id >= 0 and next_starting_id < total_recipes - 1 %}
+                                                <p><a href="{{ url_for('recipes_default', starting_id=0) }}" class="button"><< First</a> <a href="{{ url_for('recipes_default', starting_id=previous_starting_id) }}" class="button">< Previous</a> ({{ current_page }}/{{ no_pages }}) <a href="{{ url_for('recipes_default', starting_id=next_starting_id) }}" class="button">Next ></a> <a href="{{ url_for('recipes_default', starting_id=total_recipes - 10) }}" class="button">Last >></a></p>
+                                        {% elif previous_starting_id < 0 %}
+                                                <p>({{ current_page }}/{{ no_pages }}) <a href="{{ url_for('recipes_default', starting_id=next_starting_id) }}" class="button">Next ></a> <a href="{{ url_for('recipes_default', starting_id=total_recipes - 10) }}" class="button">Last >></a></p>
+                                        {% else %}
+                                                <p><a href="{{ url_for('recipes_default', starting_id=0) }}" class="button"><< First</a> <a href="{{ url_for('recipes_default', starting_id=previous_starting_id) }}" class="button">< Previous</a> ({{ current_page }}/{{ no_pages }})</p>
+                                        {% endif %}
+                                {% endif %}
                         {% else %}
                                 <p>No recipes match your search</p>
                         {% endif %}

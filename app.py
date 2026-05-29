@@ -68,6 +68,8 @@ def recipes_individual(recipe_id=0):
     if len(recipe_info) > 0:
         recipe_name = recipe_info["recipe_name"]
         recipe_method = ast.literal_eval(recipe_info["recipe_method"])
+    else:
+        recipe_info = None
     return render_template("recipes/recipe_individual.html", page_name=recipe_name, c_version=version, recipe_data=recipe_info, recipe_method=recipe_method)
 
 '''User Routes'''

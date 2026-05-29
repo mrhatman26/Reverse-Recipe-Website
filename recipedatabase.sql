@@ -27,6 +27,7 @@ CREATE TABLE table_recipes(
     recipe_serve_size TEXT,
     recipe_method TEXT,
     recipe_type TEXT,
+    recipe_image_name TEXT,
     recipe_scraped BOOLEAN NOT NULL DEFAULT 0,
     recipe_source_url TEXT,
     recipe_isDeleted BOOLEAN NOT NULL DEFAULT 0,

@@ -1,5 +1,5 @@
 import datetime as dt, re, traceback, sys
-from global_vars import deployed, mysql_info
+from global_vars import deployed, mysql_info, MISSING_RECIPE_IMAGE_DEFAULT
 from db_handler_admin import admin_test_server
 
 def pause(message=None):
@@ -147,3 +147,11 @@ def get_current_page(starting_id, no_results):
                     current_page += 1
                 break
         return current_page
+    
+def replace_missing_recipe_image(image_name):
+    if image_name is None:
+        image_name = MISSING_RECIPE_IMAGE_DEFAULT
+    else:
+        if image_name.isspace() is True or image_name == "":
+            image_name = MISSING_RECIPE_IMAGE_DEFAULT
+    return image_name

@@ -1,10 +1,11 @@
 import mysql.connector, traceback
 from global_vars import mysql_info, SYSTEM_USER_ID, DEFAULT_RECIPE_NO
 from db_config import *
-from misc import pause
+from misc import pause, replace_missing_recipe_image
 from db_handler_links import link_add_recipe_user, link_check_recipe_user, link_add_ingredient_user, link_check_ingredient_user, link_add_dietary_user, link_check_dietary_user
 from db_handler_misc import get_no_pages, get_no_results
 from action_logger import error_log
+from global_vars import MISSING_RECIPE_IMAGE_DEFAULT
 
 
 """Recipes"""
@@ -80,17 +81,19 @@ def recipe_get_all_partial(starting_id, no_results=DEFAULT_RECIPE_NO, search="",
     is_search = False
     try:
         if search.isspace() is True or search == "":
-            cursor.execute("SELECT table_recipes.recipe_id, table_recipes.recipe_name, table_recipes.recipe_author, table_recipes.recipe_type FROM table_recipes INNER JOIN link_recipe_user ON table_recipes.recipe_id=link_recipe_user.recipe_id WHERE link_recipe_user.link_isApproved = 1 AND table_recipes.recipe_isDeleted = 0 ORDER BY table_recipes.recipe_id DESC LIMIT %s, %s", (starting_id, no_results + 1))
+            cursor.execute("SELECT table_recipes.recipe_id, table_recipes.recipe_name, table_recipes.recipe_author, table_recipes.recipe_type, table_recipes.recipe_image_name FROM table_recipes INNER JOIN link_recipe_user ON table_recipes.recipe_id=link_recipe_user.recipe_id WHERE link_recipe_user.link_isApproved = 1 AND table_recipes.recipe_isDeleted = 0 ORDER BY table_recipes.recipe_id DESC LIMIT %s, %s", (starting_id, no_results + 1))
             fetch = cursor.fetchall()
         else:
             is_search = True
             pass
         for recipe in fetch:
+            image_name = replace_missing_recipe_image(recipe[4])
             recipes.append({
                 "recipe_id": recipe[0],
                 "recipe_name": recipe[1].replace("_", " ").title(),
                 "recipe_author": recipe[2].replace("_", " ").title(),
-                "recipe_type": recipe[3].replace("_", " ").title()
+                "recipe_type": recipe[3].replace("_", " ").title(),
+                "recipe_image_name": image_name
             })
         statement = cursor.statement
     except Exception as e:
@@ -115,6 +118,7 @@ def recipe_get_individual_info(recipe_id):
         cursor.execute("SELECT * FROM table_recipes WHERE recipe_id = %s", (recipe_id,))
         fetch = cursor.fetchall()
         if len(fetch) > 0:
+            image_name = replace_missing_recipe_image(fetch[0][8])
             recipe_info = {
                 "recipe_id": fetch[0][0],
                 "recipe_name": fetch[0][1].replace("_", " ").title(),
@@ -124,9 +128,10 @@ def recipe_get_individual_info(recipe_id):
                 "recipe_serve_size": fetch[0][5],
                 "recipe_method": fetch[0][6],
                 "recipe_type": fetch[0][7].replace("_", " ").title(),
-                "recipe_scraped": fetch[0][8],
-                "recipe_source_url": fetch[0][9],
-                "recipe_isDeleted": fetch[0][10],
+                "recipe_image_name": image_name,
+                "recipe_scraped": fetch[0][9],
+                "recipe_source_url": fetch[0][10],
+                "recipe_isDeleted": fetch[0][11]
             }
     except Exception as e:
         error_log("localhost", "SYSTEM", "An error occurred while retrieving individual recipe data", traceback.format_exc())

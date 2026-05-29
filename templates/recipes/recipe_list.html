@@ -17,22 +17,20 @@
                                 <a href="{{ url_for('recipes_default') }}" class="button">Add New recipe</a>
                                 <p></p>
                         {% endif %}
-                        <p>Current Page: {{ current_page }}</p>
-                        <p>Starting ID: {{ starting_id }}</p>
-                        <p>No. Results: {{ no_results }}</p>
-                        {% set test = starting_id % no_results %}
-                        {% if test > 0 %}
-                                <p>Whole: No</p>
-                        {% else %}
-                                <p>Whole: Yes</p>
-                        {% endif %}
                         {% if recipe_list|length > 0 %}
                                 {% for recipe in recipe_list %}
                                         <a href="{{ url_for('recipes_individual', recipe_id=recipe.recipe_id) }}">
+                                                {% set image_name = "images/recipe_images/" + recipe.recipe_image_name %}
                                                 <div class="recipe_box">
-                                                        <p>{{ recipe.recipe_name }}</p>
-                                                        <p>{{ recipe.recipe_author }}</p>
-                                                        <p>{{ recipe.recipe_type }}</p>
+                                                        <div class="recipe_list_image">
+                                                                <img src="{{ url_for('static', filename=image_name) }}">
+                                                        </div>
+                                                        <div class="recipe_list_info">
+                                                                <p class="recipe_list_name"><b><strong>{{ recipe.recipe_name }}</strong></b></p>
+                                                                <p>Author: {{ recipe.recipe_author }}</p>
+                                                                <p>Type: {{ recipe.recipe_type }}</p>
+                                                                <p>{{ recipe.recipe_id }}</p>
+                                                        </div>
                                                 </div>
                                         </a>
                                 {% endfor %}

@@ -9,7 +9,6 @@ from version_handler import *
 from user import User
 from global_vars import deployed, live
 from misc import set_database_config, get_current_page
-#ToDo: Finish pagination
 #ToDo: Investigate why a recipe page with an invalid ID still acts as though nothing is wrong.
 
 '''Server Vars'''

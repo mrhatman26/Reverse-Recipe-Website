@@ -134,8 +134,6 @@ def convert_time(time):
     return [hours, minutes, seconds]
 
 def get_current_page(starting_id, no_results):
-    import time
-    start_time = time.time()
     current_page = 0
     if starting_id < 1:
         return 0
@@ -148,12 +146,4 @@ def get_current_page(starting_id, no_results):
                 if starting_id > 0:
                     current_page += 1
                 break
-            print(str(starting_id), end="", flush=True)
-        actual_final_time = time.time() - start_time
-        final_time = convert_time(actual_final_time)
-        time_file = open("..\\get_current_page_time.txt", "w")
-        time_file.write("get_current_page_time function took " + str(time.time() - start_time) + " seconds")
-        time_file.write("\n(" + str(final_time[0]) + " hours, " + str(final_time[1]) + " minutes and " + str(final_time[2]) + " seconds)")
-        time_file.close()
-        print("")
         return current_page

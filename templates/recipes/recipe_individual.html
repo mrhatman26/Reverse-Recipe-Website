@@ -9,7 +9,7 @@
                     <h3 id="page_header">Invalid Recipe</h3>
                 {% endif %}
                 <div id="page_mainbody_home">
-                        {% if recipe_data is not none %}
+                        {% if recipe_data is not none and recipe_date|length > 0 %}
                             <p>Recipe By: {{ recipe_data.recipe_author }}</p>
                             <p>Prepare Time: {{ recipe_data.recipe_prep }}</p>
                             <p>Cook Time: {{ recipe_data.recipe_cook_time }}</p>

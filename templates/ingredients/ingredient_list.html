@@ -1,0 +1,67 @@
+<div id="drop_down_container">
+        <div id="drop_down_content" class="drop_down_content"></div>
+</div>
+{% extends "layout.html" %}
+{% block content %}
+<div id="page_mainbody">
+        <div id="home_paragraph1">
+                <h3 id="page_header">All Ingredients</h3>
+                <p id="previos_search" style="display: none;">{{ tag_search }}</p>
+                <div id="page_mainbody_home">
+                        <div id="recipe_search_div">
+                                {% if empty_search is true %}
+                                        <p>Search: <input multiple class="textbox" type="text" id="ingredient_search" name="txt_ingredient_search" placeholder="Pasta"><input type="submit" value="Submit" class="submit_button" id="ingredient_search_button"></p>
+                                {% else %}
+                                        <p>Search: <input multiple class="textbox" type="text" id="ingredient_search" name="txt_ingredient_search" placeholder="Pasta" value="{{ search }}"><input type="submit" value="Submit" class="submit_button" id="ingredient_search_button"></p>
+                                {% endif %}
+                                <script src="http://code.jquery.com/jquery.min.js"></script>
+                                <script src=" {{ url_for('static', filename='scripts/ingredients/ingredient_search.js') }}"></script>
+                        </div>
+                        {% if current_user.is_authenticated %}
+                                <a href="{{ url_for('ingredients_list') }}" class="button">Add New recipe</a>
+                                <p></p>
+                        {% endif %}
+                        {% if ingredient_list|length > 0 %}
+                                {% for ingredient in ingredient_list %}
+                                        <a href="{{ url_for('recipes_individual', recipe_id=ingredient.ingredient_id) }}"><!--Replace this with ingredient for individual pages!-->
+                                                <div class="recipe_box">
+                                                        <div class="recipe_list_info">
+                                                                <p class="recipe_list_name"><b><strong>{{ ingredient.ingredient_name }}</strong></b></p>
+                                                        </div>
+                                                </div>
+                                        </a>
+                                {% endfor %}
+                                <p>{{ total_ingredients }}</p>
+                                {% if total_ingredients > 10 %}
+                                        {% set previous_starting_id =  starting_id - no_results %}
+                                        {% set next_starting_id = starting_id + no_results %}
+                                        {% if next_starting_id > total_ingredients - 1 %}
+                                                {% set next_starting_id = total_ingredients - 1 %}
+                                        {% endif %}
+                                        {% if previous_starting_id >= 0 and next_starting_id < total_ingredients - 1 %}
+                                                {% if empty_search is false %}
+                                                        <p><a href="{{ url_for('ingredients_list', starting_id=0, search=ingredient_search) }}" class="button"><< First</a> <a href="{{ url_for('ingredients_list', starting_id=previous_starting_id, search=ingredient_search) }}" class="button">< Previous</a> ({{ current_page }}/{{ no_pages }}) <a href="{{ url_for('ingredients_list', starting_id=next_starting_id, search=ingredient_search) }}" class="button">Next ></a> <a href="{{ url_for('ingredients_list', starting_id=total_ingredients - 10, search=ingredient_search) }}" class="button">Last >></a></p>
+                                                {% else %}
+                                                        <p><a href="{{ url_for('ingredients_list', starting_id=0) }}" class="button"><< First</a> <a href="{{ url_for('ingredients_list', starting_id=previous_starting_id) }}" class="button">< Previous</a> ({{ current_page }}/{{ no_pages }}) <a href="{{ url_for('ingredients_list', starting_id=next_starting_id) }}" class="button">Next ></a> <a href="{{ url_for('ingredients_list', starting_id=total_ingredients - 10) }}" class="button">Last >></a></p>
+                                                {% endif %}
+                                        {% elif previous_starting_id < 0 %}
+                                                {% if empty_search is false %}
+                                                        <p>({{ current_page }}/{{ no_pages }}) <a href="{{ url_for('ingredients_list', starting_id=next_starting_id, search=ingredient_search) }}" class="button">Next ></a> <a href="{{ url_for('ingredients_list', starting_id=total_ingredients - 10, search=ingredient_search) }}" class="button">Last >></a></p>
+                                                {% else %}
+                                                        <p>({{ current_page }}/{{ no_pages }}) <a href="{{ url_for('ingredients_list', starting_id=next_starting_id) }}" class="button">Next ></a> <a href="{{ url_for('ingredients_list', starting_id=total_ingredients - 10) }}" class="button">Last >></a></p>
+                                                {% endif %}
+                                        {% else %}
+                                                {% if empty_search is false %}
+                                                        <p><a href="{{ url_for('ingredients_list', starting_id=0, search=ingredient_search) }}" class="button"><< First</a> <a href="{{ url_for('ingredients_list', starting_id=previous_starting_id, search=ingredient_search) }}" class="button">< Previous</a> ({{ current_page }}/{{ no_pages }})</p>
+                                                {% else %}
+                                                        <p><a href="{{ url_for('ingredients_list', starting_id=0) }}" class="button"><< First</a> <a href="{{ url_for('ingredients_list', starting_id=previous_starting_id) }}" class="button">< Previous</a> ({{ current_page }}/{{ no_pages }})</p>
+                                                {% endif %}
+                                        {% endif %}
+                                {% endif %}
+                        {% else %}
+                                <p>No recipes match your search</p>
+                        {% endif %}
+                </div>
+        </div>
+</div>
+{% endblock %}

@@ -26,6 +26,8 @@ def get_no_results(cursor, command, is_search):
         if is_search is True:
             command = "SELECT count(*) FROM (" + command + ") AS total"
         cursor.execute(command)
+        import pyperclip
+        pyperclip.copy(cursor.statement)
         no_results = cursor.fetchall()[0][0]
     except Exception as e:
         error_log("localhost", "SYSTEM", "Failed to get the number of results from database command", traceback.format_exc())

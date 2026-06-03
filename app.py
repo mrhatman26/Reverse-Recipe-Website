@@ -76,6 +76,24 @@ def recipes_individual(recipe_id=0):
         recipe_info["recipe_ingredients"] = link_get_recipe_ingredients(recipe_id)
     return render_template("recipes/recipe_individual.html", page_name=recipe_name, c_version=version, recipe_data=recipe_info, recipe_method=recipe_method)
 
+'''Ingredient Routes'''
+#All Ingredients
+@app.route('/ingredients/')
+@app.route('/ingredients/pid=<starting_id>')
+@app.route('/ingredients/pid=<starting_id>&search=<search>')
+def ingredients_list(starting_id=0, no_results=10, search=""):
+    access_log(request.remote_addr, get_user(), request.path)
+    try:
+        starting_id = int(starting_id)
+    except:
+        starting_id = 0
+    ingredients = ingredient_get_all(starting_id, no_results, search)
+    current_page = get_current_page(starting_id, no_results)
+    empty_search = True
+    if search.isspace() is False and search != "":
+        empty_search = False
+    return render_template("ingredients/ingredient_list.html", page_name="All Ingredients", c_version=version, ingredient_search=search, empty_search=empty_search, ingredient_list=ingredients[0], no_pages=ingredients[1], total_ingredients=ingredients[2], no_results=no_results, current_page=current_page + 1, starting_id=starting_id, search=search)
+
 '''User Routes'''
 #Account Page
 @app.route("/users/account/")

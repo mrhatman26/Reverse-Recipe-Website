@@ -295,6 +295,70 @@ def ingredient_get_id(ingredient_name, database=None, cursor=None, close_connect
             if database is not None:
                 database.close()
         return None
+    
+def ingredient_get_all(starting_id, no_results=DEFAULT_RECIPE_NO, search=""):
+    #Returns all of the ingredients. Refined with the searches.
+    #Arguments:
+    #   -starting_id (Int) [Default: ""]: The ID of the first ingredient to return.
+    #   -no_results (Int) [Default: DEFAULT_RECIPE_NO]: The number of results to return.
+    #   -search (Str) [Default: ""]: The search to enter in the database. Returns all ingredients if left empty.
+    #Returns: Tuple:
+    #   0: List of ingredients returned from database.
+    #   1: Number of pages to contain all ingredients for pagination.
+    #   2: Total number of ingredients in the database (Ignoring the DELETED recipe with ID of -1).
+    database = None
+    cursor = None
+    ingredients = []
+    fetch = []
+    try:
+        database = mysql.connector.connect(**mysql_info)
+        cursor = database.cursor()
+        if search.isspace() is False and search != "":
+            cursor.execute("SELECT ingredient_id, ingredient_name FROM table_ingredients WHERE ingredient_isDeleted = 0 AND ingredient_name LIKE %s ORDER BY ingredient_id DESC LIMIT %s, %s", ("%" + search + "%", starting_id, no_results + 1,))
+        else:
+            cursor.execute("SELECT ingredient_id, ingredient_name FROM table_ingredients WHERE ingredient_isDeleted = 0 ORDER BY ingredient_id DESC LIMIT %s, %s", (starting_id, no_results + 1))
+        fetch = cursor.fetchall()
+        for ingredient in fetch:
+            ingredients.append({
+                "ingredient_id": ingredient[0],
+                "ingredient_name": ingredient[1].replace("_", " ").title()
+            })
+    except Exception as e:
+        error_log("localhost", "SYSTEM", "An error occurred while retrieveing ingredient data", traceback.format_exc())
+    finally:
+        statement = cursor.statement
+        no_pages = get_no_pages(cursor, statement, starting_id)
+        total_ingredients = get_no_results(cursor, statement, is_search=False)
+        if cursor is not None:
+            cursor.close()
+        if database is not None:
+            database.close()
+        return (ingredients, no_pages, total_ingredients)
+    
+def ingredient_get_info(ingredient_id):
+    #Returns data for the specified ingredient.
+    #Arguments:
+    #   -ingredient_id: The ID of the ingredient to get the data for.
+    #Returns: Dict (Contains ingredient info with they keys being the column names of table_ingredients)
+    ingredient_info = {}
+    database = mysql.connector.connect(**mysql_info)
+    cursor = database.cursor()
+    try:
+        cursor.execute("SELECT * FROM table_ingredients WHERE ingredient_id = %s", (ingredient_id,))
+        fetch = cursor.fetchall()
+        if len(fetch) > 0:
+            ingredient_info = {
+                "ingredient_id": fetch[0][0],
+                "ingredient_name": fetch[0][1].replace("_", " ").title(),
+                "ingredient_desc": fetch[0][2].replace("_", " ").title(),
+                "ingredient_isDeleted": fetch[0][3]
+            }
+    except Exception as e:
+        error_log("localhost", "SYSTEM", "An error occurred while retrieving individual ingredient data", traceback.format_exc())
+    finally:
+        cursor.close()
+        database.close()
+        return ingredient_info
 
 #Check
 def ingredient_check_id_exists(ingredient_id, database=None, cursor=None, close_connection=True):

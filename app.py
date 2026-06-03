@@ -4,6 +4,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user
 from db_handler_users import *
 from db_handler_general import *
 from db_handler_admin import *
+from db_handler_links import link_get_recipe_user_id, link_get_recipe_ingredients
 from action_logger import *
 from version_handler import *
 from user import User
@@ -70,6 +71,9 @@ def recipes_individual(recipe_id=0):
         recipe_method = ast.literal_eval(recipe_info["recipe_method"])
     else:
         recipe_info = None
+    if recipe_info is not None:
+        recipe_info["recipe_user"] = user_get_username(link_get_recipe_user_id(recipe_id))
+        recipe_info["recipe_ingredients"] = link_get_recipe_ingredients(recipe_id)
     return render_template("recipes/recipe_individual.html", page_name=recipe_name, c_version=version, recipe_data=recipe_info, recipe_method=recipe_method)
 
 '''User Routes'''

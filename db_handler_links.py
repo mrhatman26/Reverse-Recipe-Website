@@ -93,6 +93,59 @@ def link_check_recipe_dietary(recipe_id, dietary_id, database=None, cursor=None,
             if database is not None:
                 database.close()
         return False
+    
+#Get
+def link_get_recipe_user_id(recipe_id):
+    #Returns the user ID of the user who added the specified recipe.
+    #Arguements:
+    #   -recipe_id (String): The recipe_id to check
+    #Returns: String (User ID)
+    database = None
+    cursor = None
+    try:
+        database = mysql.connector.connect(**mysql_info)
+        cursor = database.cursor()
+        cursor.execute("SELECT table_users.user_id FROM table_users INNER JOIN link_recipe_user ON table_users.user_id=link_recipe_user.user_id WHERE link_recipe_user.recipe_id = %s", (recipe_id,))
+        fetch = cursor.fetchall()
+        cursor.close()
+        database.close()
+        return fetch[0][0]
+    except:
+        if cursor is not None:
+            cursor.close()
+        if database is not None:
+            database.close()
+        return None
+    
+def link_get_recipe_ingredients(recipe_id, return_ingredient_names=True):
+    #Returns the name or IDs of the ingredients linked to the specified recipe.
+    #Arguments:
+    #   -recipe_id (String): The recipe_id to check.
+    #   -return_ingredient_names (Boolean) [Default: True]: If False, the ingredient IDs will be returned instead of the names.
+    #Returns: List (Ingredient names or ingredient IDs)
+    database = None
+    cursor = None
+    ingredients = []
+    try:
+        database = mysql.connector.connect(**mysql_info)
+        cursor = database.cursor()
+        if return_ingredient_names is True:
+            cursor.execute("SELECT ingredient_name FROM table_ingredients WHERE ingredient_id IN (SELECT table_ingredients.ingredient_id FROM table_ingredients INNER JOIN link_recipe_ingredient ON table_ingredients.ingredient_id=link_recipe_ingredient.ingredient_id WHERE link_recipe_ingredient.recipe_id = %s)", (recipe_id,))
+        else:
+            cursor.execute("SELECT table_ingredients.ingredient_id FROM table_ingredients INNER JOIN link_recipe_ingredient ON table_ingredients.ingredient_id=link_recipe_ingredient.ingredient_id WHERE link_recipe_ingredient.recipe_id = %s", (recipe_id,))
+        fetch = cursor.fetchall()
+        cursor.close()
+        database.close()
+        if len(fetch) > 0:
+            for ingredient in fetch:
+                ingredients.append(ingredient[0])
+        return ingredients
+    except:
+        if cursor is not None:
+            cursor.close()
+        if database is not None:
+            database.close()
+        return None
 
 #Add
 def link_add_recipe_user(recipe_id, user_id, auto_approve=False, database=None, cursor=None, close_connection=True):

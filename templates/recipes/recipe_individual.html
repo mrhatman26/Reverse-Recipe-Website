@@ -24,6 +24,25 @@
                                 <p>{{ loop.index }}. {{ step }}</p>
                             {% endfor %}
                             </p>
+                            {% if recipe_data.recipe_user == "SYSTEM" %}
+                                <p>This recipe was added automatically</p>
+                            {% else %}
+                                <p>Recipe Added By: {{ recipe_data.recipe_user }}</p>
+                            {% endif %}
+                            {% if recipe_data.recipe_ingredients is not none %}
+                                {% if recipe_data.recipe_ingredients|length > 0 %}
+                                    <p>This recipe has the following ingredients:</p>
+                                    <ul>
+                                        {% for ingredient in recipe_data.recipe_ingredients %}
+                                            <li>{{ loop.index }}. {{ ingredient }}</li><br>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>This recipe is not currently linked to any ingredients.</p>
+                                {% endif %}
+                            {% else %}
+                                <p>This recipe is not currently linked to any ingredients.</p>
+                            {% endif %}
                         {% else %}
                             <p>The selected recipe is invalid. Fire the guys who broke this. Build better ones.</p>
                             <p>If this error is consistent, please report it!</p>

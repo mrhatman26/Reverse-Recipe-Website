@@ -23,7 +23,7 @@
                         {% endif %}
                         {% if ingredient_list|length > 0 %}
                                 {% for ingredient in ingredient_list %}
-                                        <a href="{{ url_for('recipes_individual', recipe_id=ingredient.ingredient_id) }}"><!--Replace this with ingredient for individual pages!-->
+                                        <a href="{{ url_for('ingredient_individual', ingredient_id=ingredient.ingredient_id) }}">
                                                 <div class="recipe_box">
                                                         <div class="recipe_list_info">
                                                                 <p class="recipe_list_name"><b><strong>{{ ingredient.ingredient_name }}</strong></b></p>

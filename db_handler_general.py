@@ -347,10 +347,14 @@ def ingredient_get_info(ingredient_id):
         cursor.execute("SELECT * FROM table_ingredients WHERE ingredient_id = %s", (ingredient_id,))
         fetch = cursor.fetchall()
         if len(fetch) > 0:
+            if fetch[0][2] is None:
+                description = ""
+            else:
+                description = fetch[0][2]
             ingredient_info = {
                 "ingredient_id": fetch[0][0],
                 "ingredient_name": fetch[0][1].replace("_", " ").title(),
-                "ingredient_desc": fetch[0][2].replace("_", " ").title(),
+                "ingredient_desc": description.replace("_", " ").title(),
                 "ingredient_isDeleted": fetch[0][3]
             }
     except Exception as e:

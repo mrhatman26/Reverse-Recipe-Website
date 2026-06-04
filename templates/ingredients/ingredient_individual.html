@@ -3,45 +3,17 @@
 <script src="http://code.jquery.com/jquery.min.js"></script>
 <div id="page_mainbody">
         <div id="home_paragraph1">
-                {% if recipe_data is not none %}   
-                    <h3 id="page_header">{{ recipe_data.recipe_name }}</h3>
+                {% if ingredient_data is not none %}   
+                    <h3 id="page_header">{{ ingredient_data.ingredient_name }}</h3>
                 {% else %}
-                    <h3 id="page_header">Invalid Recipe</h3>
+                    <h3 id="page_header">Invalid Ingredient</h3>
                 {% endif %}
                 <div id="page_mainbody_home">
-                        {% if recipe_data is not none %}
-                            <p>Recipe By: {{ recipe_data.recipe_author }}</p>
-                            <p>Prepare Time: {{ recipe_data.recipe_prep }}</p>
-                            <p>Cook Time: {{ recipe_data.recipe_cook_time }}</p>
-                            <p>Serving Size: {{ recipe_data.recipe_serve_size }}</p>
-                            <p>Type: {{ recipe_data.recipe_type }}</p>
-                            {% if recipe_data.recipe_scraped == 1 %}
-                                <p>This recipe was scraped from BBC Food</p>
-                                <p>Original URL: <a href="{{ recipe_data.recipe_source_url }}">{{ recipe_data.recipe_source_url }}</a></p>
-                            {% endif %}
-                            <p>Method:<br>
-                            {% for step in recipe_method %}
-                                <p>{{ loop.index }}. {{ step }}</p>
-                            {% endfor %}
-                            </p>
-                            {% if recipe_data.recipe_user == "SYSTEM" %}
-                                <p>This recipe was added automatically</p>
+                        {% if ingredient_data is not none %}
+                            {% if ingredient_data.ingredient_desc is not none %}
+                                <p>{{ ingredient_data.ingredient_desc }}</p>
                             {% else %}
-                                <p>Recipe Added By: {{ recipe_data.recipe_user }}</p>
-                            {% endif %}
-                            {% if recipe_data.recipe_ingredients is not none %}
-                                {% if recipe_data.recipe_ingredients|length > 0 %}
-                                    <p>This recipe has the following ingredients:</p>
-                                    <ul>
-                                        {% for ingredient in recipe_data.recipe_ingredients %}
-                                            <li>{{ loop.index }}. {{ ingredient }}</li><br>
-                                        {% endfor %}
-                                    </ul>
-                                {% else %}
-                                    <p>This recipe is not currently linked to any ingredients.</p>
-                                {% endif %}
-                            {% else %}
-                                <p>This recipe is not currently linked to any ingredients.</p>
+                                <p>This ingredient has no description yet.</p>
                             {% endif %}
                         {% else %}
                             <p>The selected recipe is invalid. Fire the guys who broke this. Build better ones.</p>

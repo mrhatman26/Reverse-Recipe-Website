@@ -66,14 +66,14 @@ def recipes_individual(recipe_id=0):
     recipe_info = recipe_get_individual_info(recipe_id)
     recipe_name = "Uknown Recipe"
     recipe_method = []
-    if len(recipe_info) > 0:
-        recipe_name = recipe_info["recipe_name"]
-        recipe_method = ast.literal_eval(recipe_info["recipe_method"])
-    else:
-        recipe_info = None
     if recipe_info is not None:
         recipe_info["recipe_user"] = user_get_username(link_get_recipe_user_id(recipe_id))
         recipe_info["recipe_ingredients"] = link_get_recipe_ingredients(recipe_id)
+        if len(recipe_info) > 0:
+            recipe_name = recipe_info["recipe_name"]
+            recipe_method = ast.literal_eval(recipe_info["recipe_method"])
+        else:
+            recipe_info = None
     return render_template("recipes/recipe_individual.html", page_name=recipe_name, c_version=version, recipe_data=recipe_info, recipe_method=recipe_method)
 
 '''Ingredient Routes'''
@@ -93,6 +93,19 @@ def ingredients_list(starting_id=0, no_results=10, search=""):
     if search.isspace() is False and search != "":
         empty_search = False
     return render_template("ingredients/ingredient_list.html", page_name="All Ingredients", c_version=version, ingredient_search=search, empty_search=empty_search, ingredient_list=ingredients[0], no_pages=ingredients[1], total_ingredients=ingredients[2], no_results=no_results, current_page=current_page + 1, starting_id=starting_id, search=search)
+
+#Individual Ingredient
+@app.route('/ingredients/ingredient_id=<ingredient_id>')
+def ingredient_individual(ingredient_id=0):
+    access_log(request.remote_addr, get_user(), request.path)
+    ingredient_info = ingredient_get_info(ingredient_id)
+    ingredient_name = "Uknown Ingredient"
+    if len(ingredient_info) > 0:
+        ingredient_name = ingredient_info["ingredient_name"]
+        if ingredient_info["ingredient_desc"] == "" or ingredient_info["ingredient_desc"].isspace() is True:
+            ingredient_info["ingredient_desc"] = None
+    fprint(ingredient_info)
+    return render_template("ingredients/ingredient_individual.html", page_name=ingredient_name, c_version=version, ingredient_data=ingredient_info)
 
 '''User Routes'''
 #Account Page

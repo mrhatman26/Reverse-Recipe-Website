@@ -15,6 +15,16 @@
                             {% else %}
                                 <p>This ingredient has no description yet.</p>
                             {% endif %}
+                            {% if ingredient_data.ingredient_user is not none %}
+                                {% if ingredient_data.ingredient_user == "SYSTEM" %}
+                                    <p>This ingredient was added automatically.</p>
+                                {% else %}
+                                    <p>Ingredient added by {{ ingredient_data.ingredient_user }}</p>
+                                {% endif %}
+                            {% else %}
+                                <p>Some how, this ingredient was added by nobody! Let's hope someone gets fired for that blunder.</p>
+                            {% endif %}
+                            <a href="{{ url_for('recipes_default') }}" class="button">View linked recipes</a>
                         {% else %}
                             <p>The selected recipe is invalid. Fire the guys who broke this. Build better ones.</p>
                             <p>If this error is consistent, please report it!</p>

@@ -275,6 +275,32 @@ def link_check_ingredient_user(ingredient_id, database=None, cursor=None, close_
                 database.close()
         return False
     
+#Get
+def link_get_ingredient_user(ingredient_id):
+    #Returns the user ID of the person who added the ingredient.
+    #Arguemnts:
+    #   -ingredient_id: The ingredient ID to check
+    #Returns: String (User ID) or None (No users linked to this recipe)
+    database = None
+    cursor = None
+    try:
+        database = mysql.connector.connect(**mysql_info)
+        cursor = database.cursor()
+        cursor.execute("SELECT table_users.user_id FROM table_users INNER JOIN link_ingredient_user ON table_users.user_id = link_ingredient_user.user_id WHERE link_ingredient_user.ingredient_id = %s", (ingredient_id,))
+        fetch = cursor.fetchall()
+        cursor.close()
+        database.close()
+        if len(fetch) > 0:
+            return fetch[0][0]
+        else:
+            return None
+    except:
+        if cursor is not None:
+            cursor.close()
+        if database is not None:
+            database.close()
+        return None
+    
 #Add
 def link_add_ingredient_user(ingredient_id, user_id, auto_approve=False, database=None, cursor=None, close_connection=True):
     #Links a recipe to a user. The linked user is then considered to be the user that originally added it. A link must be approved by a moderator or an admin. Auto approve does this automatically.

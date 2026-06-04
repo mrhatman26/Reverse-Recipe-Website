@@ -4,7 +4,7 @@ from flask_login import LoginManager, current_user, login_user, logout_user
 from db_handler_users import *
 from db_handler_general import *
 from db_handler_admin import *
-from db_handler_links import link_get_recipe_user_id, link_get_recipe_ingredients
+from db_handler_links import link_get_recipe_user_id, link_get_recipe_ingredients, link_get_ingredient_user
 from action_logger import *
 from version_handler import *
 from user import User
@@ -104,7 +104,7 @@ def ingredient_individual(ingredient_id=0):
         ingredient_name = ingredient_info["ingredient_name"]
         if ingredient_info["ingredient_desc"] == "" or ingredient_info["ingredient_desc"].isspace() is True:
             ingredient_info["ingredient_desc"] = None
-    fprint(ingredient_info)
+        ingredient_info["ingredient_user"] = user_get_username(link_get_ingredient_user(ingredient_id))
     return render_template("ingredients/ingredient_individual.html", page_name=ingredient_name, c_version=version, ingredient_data=ingredient_info)
 
 '''User Routes'''

@@ -8,10 +8,17 @@
                 <h3 id="page_header">All recipes</h3>
                 <p id="previos_search" style="display: none;">{{ tag_search }}</p>
                 <div id="page_mainbody_home">
+                        <p>Search:</p>
                         <div id="recipe_search_div">
-                                <p>Search: <input multiple class="textbox" type="text" id="recipe_search" name="txt_recipe_search" placeholder="3d fps action"><input type="submit" value="Submit" class="submit_button" id="recipe_search_button"></p>
+                                <input disabled class="textbox" type="text" id="recipe_search" name="txt_recipe_search" placeholder="Tasty Ingredients"><br>
+                                <div id="recipe_search_add_item_div" style="margin-top: 1%;">
+                                        <input class="textbox" type="text" id="recipe_item_search_text_box" name="txt_recipe_search" placeholder="Pasta"><br>
+                                        <input type="submit" value="Add" class="submit_button_search" id="recipe_search_add">
+                                        <input type="submit" value="Avoid" class="submit_button_search" id="recipe_search_avoid">
+                                </div>
+                                <input type="submit" value="Submit" class="submit_button" id="recipe_search_button">
                                 <script src="http://code.jquery.com/jquery.min.js"></script>
-                                <script src=" {{ url_for('static', filename='scripts/tag_get_closest.js') }}"></script>
+                                <script src=" {{ url_for('static', filename='scripts/recipes/recipe_search.js') }}"></script>
                         </div>
                         {% if current_user.is_authenticated %}
                                 <a href="{{ url_for('recipes_default') }}" class="button">Add New recipe</a>

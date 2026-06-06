@@ -1,7 +1,7 @@
-ingredientSearchBox = document.getElementById("ingredient_search");
-searchDiv = document.getElementById("recipe_search_div");
-searchButton = document.getElementById("ingredient_search_button");
-errorMessage = null;
+let ingredientSearchBox = document.getElementById("ingredient_search");
+let searchDiv = document.getElementById("recipe_search_div");
+let searchButton = document.getElementById("ingredient_search_button");
+let errorMessage = null;
 
 function showErrorMessage(message){
     errorMessage = document.getElementById("error_message");

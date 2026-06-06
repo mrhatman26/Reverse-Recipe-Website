@@ -167,6 +167,16 @@ br{
     width: 20%;
     text-align: center;
     font-size: 16px;
+    margin-right: 1%;
+    margin-left: 0.5%;
+}
+.textbox:disabled{
+    border: 8px solid whitesmoke;
+    border-radius: 8px;
+    width: 40%;
+    text-align: center;
+    font-size: 16px;
+    background-color: whitesmoke;
 }
 #list_item{
     text-align: center;
@@ -222,6 +232,15 @@ select{
 .submit_button:hover{
     cursor: pointer;
 }
+.submit_button_search{
+    width: auto;
+    margin: auto;
+    margin-top: 2.5%;
+    font-size: 75%;
+}
+.submit_button_search:hover{
+    cursor: pointer;
+}
 .tag_type_genre{
     color: purple;
 }
@@ -249,7 +268,7 @@ select{
     color: white;
 }
 #drop_down_container{
-    position: relative;
+    position: absolute;
     display: inline-block;
 }
 .drop_down_content{
@@ -295,6 +314,16 @@ select{
 .recipe_list_name{
     font-size: 150%;
     line-height: 110%;
+}
+#recipe_search_div{
+    margin: auto;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    padding-top: 1%;
+    padding-bottom: 1%;
+    width: 50%;
+    border: 8px solid black;
+    border-radius: 8px;
 }
 
 input::-webkit-outer-spin-button,

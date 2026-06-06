@@ -5,6 +5,7 @@ from db_handler_users import *
 from db_handler_general import *
 from db_handler_admin import *
 from db_handler_links import link_get_recipe_user_id, link_get_recipe_ingredients, link_get_ingredient_user
+from db_handler_misc import search_all_names
 from action_logger import *
 from version_handler import *
 from user import User
@@ -337,6 +338,12 @@ def admin_database_manage():
     else:
         access_log(request.remote_addr, get_user(), request.path, admin=True, failed=True, no_auth=True)
         abort(404)
+
+'''Misc Routes'''
+#Search All Database Names
+@app.route("/database/searchnames/search=<search>", methods=["GET"])
+def database_search_names(search=""):
+    return search_all_names(search)
 
 #Error Pages
 #These pages are only shown when the website encounters an error.
